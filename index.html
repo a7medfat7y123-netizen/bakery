@@ -679,6 +679,62 @@
   }
   @media (prefers-reduced-motion: reduce) { .wordmark { animation: none; } }
 
+  /* ===== القائمة الجانبية ===== */
+  .menubtn {
+    width: 44px; height: 44px; flex: none; border-radius: 14px; cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, .2); background: rgba(255, 255, 255, .1);
+    display: grid; place-content: center; gap: 5px; padding: 0;
+  }
+  .menubtn span { display: block; width: 20px; height: 2.5px; border-radius: 2px; background: #f3dcc4; }
+  .drawer-back {
+    position: fixed; inset: 0; z-index: 25; background: rgba(15, 7, 2, .55); backdrop-filter: blur(3px);
+    opacity: 0; pointer-events: none; transition: opacity .3s;
+  }
+  .drawer-back.open { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: fixed; z-index: 26; top: 0; bottom: 0; inset-inline-start: 0;
+    width: min(340px, 86vw); display: flex; flex-direction: column;
+    background: linear-gradient(180deg, #2b1a0f, #1d1209); color: #f3e3cf;
+    box-shadow: 0 0 40px rgba(0, 0, 0, .5);
+    translate: 100% 0; transition: translate .35s cubic-bezier(.2, .9, .3, 1);
+  }
+  [dir="ltr"] .drawer { translate: -100% 0; }
+  .drawer.open { translate: 0 0; }
+  body.no-scroll { overflow: hidden; }
+  .d-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
+  .d-head b { font-size: 1.3rem; color: #f6b97a; }
+  .d-close { width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer; background: rgba(255, 255, 255, .1); color: #fff; font-size: 1rem; }
+  .d-body { flex: 1; overflow-y: auto; padding: 6px 14px 24px; }
+  .drawer section.d-sec {
+    background: none; border: none; border-radius: 0; box-shadow: none; transform: none !important;
+    margin: 0; padding: 14px 0; border-bottom: 1px dashed rgba(255, 255, 255, .12);
+  }
+  .d-sec:last-child { border-bottom: none; }
+  .d-sec h3 { margin: 0 0 10px; font-size: 1rem; color: #fff; }
+  .d-cats { display: grid; gap: 6px; }
+  .d-cats a {
+    display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 14px;
+    color: #f3e3cf; text-decoration: none; background: rgba(255, 255, 255, .05);
+    transition: background .2s, transform .2s;
+  }
+  .d-cats a:hover { background: rgba(246, 185, 122, .18); transform: translateX(-3px); }
+  .d-ico { width: 36px; height: 36px; flex: none; border-radius: 12px; display: grid; place-items: center; font-size: 1.25rem; background: radial-gradient(circle at 35% 30%, #fff3df, #f0c48a); }
+  .d-name { flex: 1; font-weight: 700; }
+  .d-cats small { min-width: 26px; text-align: center; padding: 0 8px; border-radius: 999px; background: rgba(255, 255, 255, .12); font-size: .8rem; }
+  .d-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .d-list li { display: flex; justify-content: space-between; gap: 8px; padding: 8px 10px; border-radius: 12px; background: rgba(255, 255, 255, .05); font-size: .92rem; }
+  .d-list b { color: #f6b97a; }
+  .d-pay { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border-radius: 14px; background: rgba(255, 255, 255, .05); margin-bottom: 6px; }
+  .d-pay-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+  .d-pay-txt small { color: #cdb497; font-size: .8rem; }
+  .d-num { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; padding: 4px 4px 4px 10px; border-radius: 10px; background: rgba(0, 0, 0, .25); font-weight: 800; letter-spacing: .04em; }
+  .d-copy { border: none; cursor: pointer; border-radius: 8px; padding: 3px 10px; font: inherit; font-size: .78rem; font-weight: 700; background: #f6b97a; color: #3b2a1e; }
+  .d-contact { display: grid; gap: 8px; }
+  .d-btn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 11px; border-radius: 14px; text-decoration: none; font-weight: 800; color: #fff; }
+  .d-btn.call { background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .2); }
+  .d-btn.wa { background: #25d366; box-shadow: 0 4px 0 #128c4a; }
+  @media (prefers-reduced-motion: reduce) { .drawer, .drawer-back { transition: none; } }
+
   /* ===== الإيصال ===== */
   #receiptOverlay { z-index: 32; }
   .receipt {
@@ -731,6 +787,7 @@
 <body>
 
 <nav class="topbar" id="topbar">
+  <button class="menubtn" id="drawerOpen" type="button" aria-label="القائمة" aria-controls="drawer" aria-expanded="false"><span></span><span></span><span></span></button>
   <a class="brand" href="#top"><span>🥐</span><b class="brand-name"></b></a>
   <div class="navlinks">
     <a href="#menuSection">المنيو</a>
@@ -740,6 +797,33 @@
   </div>
   <button class="navcart" id="navCart" type="button" aria-label="السلة">🛒<span id="navCount">0</span></button>
 </nav>
+
+<!-- القائمة الجانبية: الأقسام + الدفع + الأرقام + التوصيل -->
+<div class="drawer-back" id="drawerBack"></div>
+<aside class="drawer" id="drawer" aria-label="القائمة الجانبية" aria-hidden="true">
+  <div class="d-head">
+    <b>🥐 <span class="brand-name"></span></b>
+    <button class="d-close" id="drawerClose" type="button" aria-label="إغلاق">✕</button>
+  </div>
+  <div class="d-body">
+    <section class="d-sec">
+      <h3>🍽️ الأقسام</h3>
+      <nav class="d-cats" id="drawerCats"></nav>
+    </section>
+    <section class="d-sec">
+      <h3>🛵 التوصيل</h3>
+      <ul class="d-list" id="drawerDelivery"></ul>
+    </section>
+    <section class="d-sec">
+      <h3>💳 طرق الدفع</h3>
+      <div id="drawerPay"></div>
+    </section>
+    <section class="d-sec">
+      <h3>📞 كلّمنا</h3>
+      <div class="d-contact" id="drawerContact"></div>
+    </section>
+  </div>
+</aside>
 
 <header id="top">
   <div class="logo">🥐</div>
@@ -1124,6 +1208,7 @@
     document.getElementById("chips").innerHTML = shown.map(({ id, category }, i) =>
       `<a href="#${id}" class="${i ? "" : "active"}"><span aria-hidden="true">${catIcon(category)}</span> ${category}</a>`).join("");
     watchSections();
+    renderDrawerCats();
   }
 
   // فتح وقفل القسم المخفي (من الزرار نفسه أو من شريط الأقسام) — بنغيّر الكلاس بس عشان الفتح يبقى ناعم
@@ -1151,6 +1236,55 @@
       toggleSecret(sec.id, true);
     }
   });
+
+  // ===== القائمة الجانبية =====
+  function renderDrawerCats() {
+    const el = document.getElementById("drawerCats");
+    if (!el) return;
+    el.innerHTML = MENU.map(({ category, items }, i) =>
+      `<a href="#cat-${i}" data-cat="cat-${i}"><span class="d-ico">${catIcon(category)}</span><span class="d-name">${category}</span><small>${items.length}</small></a>`).join("");
+  }
+  function renderDrawerInfo() {
+    $("drawerDelivery").innerHTML = `
+      <li><span>رسوم التوصيل</span><b>${money(DELIVERY_FEE)}</b></li>
+      <li><span>أقل طلب للتوصيل</span><b>${money(MIN_ORDER)}</b></li>
+      <li><span>الاستلام من المخبز</span><b>مجاناً</b></li>
+      ${ADDRESS ? `<li><span>📍 العنوان</span><b>${ADDRESS}</b></li>` : ""}`;
+    const payRow = (icon, title, sub, num) => `<div class="d-pay"><span class="d-ico">${icon}</span><div class="d-pay-txt"><b>${title}</b><small>${sub}</small>${num ? `<span class="d-num"><span dir="ltr">${num}</span><button class="d-copy" type="button" data-copy="${num}">نسخ</button></span>` : ""}</div></div>`;
+    $("drawerPay").innerHTML =
+      payRow("💵", "كاش", "عند الاستلام أو مع المندوب") +
+      payRow("⚡", "إنستاباي", "تحويل فوري من أي بنك", INSTAPAY) +
+      payRow("📱", "محفظة إلكترونية", "فودافون كاش • اتصالات • أورنج • وي", WALLET);
+    $("drawerContact").innerHTML = PHONE ? `
+      <a class="d-btn call" href="tel:${PHONE}">📞 اتصل بينا <span dir="ltr">${PHONE}</span></a>
+      <a class="d-btn wa" href="https://wa.me/2${PHONE}" target="_blank" rel="noopener">💬 كلّمنا واتساب</a>` : "";
+  }
+
+  function setDrawer(open) {
+    $("drawer").classList.toggle("open", open);
+    $("drawerBack").classList.toggle("open", open);
+    $("drawer").setAttribute("aria-hidden", !open);
+    $("drawerOpen").setAttribute("aria-expanded", open);
+    document.body.classList.toggle("no-scroll", open);
+  }
+  function initDrawer() {
+    $("drawerOpen").onclick = () => setDrawer(true);
+    $("drawerClose").onclick = () => setDrawer(false);
+    $("drawerBack").onclick = () => setDrawer(false);
+    addEventListener("keydown", e => { if (e.key === "Escape") setDrawer(false); });
+    $("drawerCats").addEventListener("click", e => {
+      const a = e.target.closest("[data-cat]");
+      if (!a) return;
+      e.preventDefault();
+      setDrawer(false);
+      if ($("search").value) { $("search").value = ""; render(); } // نرجّع كل الأقسام لو فيه بحث
+      const sec = document.getElementById(a.dataset.cat);
+      if (sec?.classList.contains("secret")) toggleSecret(sec.id, true);
+      else sec?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    renderDrawerInfo();
+    renderDrawerCats();
+  }
 
   // تمييز القسم الظاهر في شريط الأقسام
   let spy;
@@ -1183,6 +1317,7 @@
 
   // ===== السلة =====
   const $ = id => document.getElementById(id);
+  initDrawer();
   const form = $("sheet");
   const mode = () => form.elements.mode.value;
   const pay = () => form.elements.pay.value;
