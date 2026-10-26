@@ -16,3 +16,7 @@ fruit-cake.jpg | File:Strawberry Cake.JPG | David | Public domain | https://comm
 black-forest.jpg | File:Black Forest gateau.jpg | Mikelo | CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:Black_Forest_gateau.jpg
 choco-cake.jpg | File:Chocolate Cake with a Decadent Ganache.jpg | روتانا | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Chocolate_Cake_with_a_Decadent_Ganache.jpg
 background.jpg | File:Artisan breads.jpg | Jungle Jim's International Market from FAIRFIELD, USA | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Artisan_breads.jpg
+diet-pizza.jpg | File:Whole wheat pizza - September 2013 18.jpg | Wheeler Cowperthwaite | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Whole_wheat_pizza_-_September_2013_18.jpg
+diet-cheese-pie.jpg | File:Tiropita Greek dish.jpg | Tanya Bakogiannis | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:Tiropita_Greek_dish.jpg
+oat-cookies.jpg | File:Oatmeal cookies on a plate.jpg | Evan Prodromou | CC0 | https://commons.wikimedia.org/wiki/File:Oatmeal_cookies_on_a_plate.jpg
+oat-bread.jpg | File:Pumpkin Pie and Honey Oat Loaf.jpg | Alex Barrow | CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:Pumpkin_Pie_and_Honey_Oat_Loaf.jpg (cropped)
