@@ -455,6 +455,77 @@
   .toast.show { translate: -50% 0; opacity: 1; }
   @media (prefers-reduced-motion: reduce) { .logo { animation: none; } }
 
+  /* ===== شريط التنقل ===== */
+  .topbar {
+    position: fixed; z-index: 15; top: 0; inset-inline: 0; height: 60px;
+    display: flex; align-items: center; gap: 16px; padding: 0 16px;
+    background: rgba(30, 16, 8, .35); backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+    transition: background .3s, box-shadow .3s;
+  }
+  .topbar.scrolled { background: rgba(30, 16, 8, .88); box-shadow: 0 8px 24px rgba(0, 0, 0, .3); }
+  .brand { display: flex; align-items: center; gap: 8px; color: #f6b97a; text-decoration: none; font-size: 1.25rem; font-weight: 800; }
+  .navlinks { flex: 1; display: flex; justify-content: center; gap: 4px; }
+  .navlinks a { color: #f3dcc4; text-decoration: none; font-weight: 600; padding: 6px 12px; border-radius: 999px; transition: background .2s; }
+  .navlinks a:hover { background: rgba(255, 255, 255, .12); }
+  .navcart {
+    position: relative; margin-inline-start: auto; width: 44px; height: 44px; border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, .2); background: rgba(255, 255, 255, .1);
+    font-size: 1.3rem; cursor: pointer;
+  }
+  .navcart span {
+    position: absolute; top: -6px; inset-inline-end: -6px; min-width: 22px; height: 22px; padding: 0 6px;
+    border-radius: 999px; background: var(--accent); color: #fff; font: 800 .75rem/22px "Cairo", sans-serif;
+  }
+  .navcart span:empty, .navcart span[data-zero] { display: none; }
+  @media (max-width: 640px) { .navlinks { display: none; } }
+
+  header { padding-top: 96px; }
+  .chips { top: 60px; }
+  section.cat { scroll-margin-top: 130px; }
+  .contact-card, .band, main { scroll-margin-top: 70px; }
+
+  .cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 22px; }
+  .cta a { text-decoration: none; padding: 12px 24px; border-radius: 16px; font-weight: 800; font-size: 1.05rem; }
+  .cta-wa { color: #fff; background: rgba(37, 211, 102, .9); box-shadow: 0 4px 0 #128c4a, 0 10px 20px rgba(0, 0, 0, .25); }
+
+  /* ===== أقسام "ليه إحنا" و"إزاي تطلب" ===== */
+  .band {
+    max-width: 980px; margin: 40px auto 0; padding: 0 16px;
+    background: none; border: none; border-radius: 0; box-shadow: none; transform: none !important;
+  }
+  .band h2 { transform: none; }
+  .band-title { color: #fff; text-align: center; font-size: 1.6rem; margin: 0 0 18px; }
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+  .feature, .steps li {
+    background: var(--card); color: var(--ink); border-radius: 20px; padding: 20px;
+    text-align: center; box-shadow: 0 14px 30px -14px rgba(0, 0, 0, .55);
+    transition: transform .25s;
+  }
+  .feature:hover, .steps li:hover { transform: translateY(-4px); }
+  .feature span { font-size: 2.2rem; }
+  .feature b, .steps b { display: block; margin: 6px 0 4px; font-size: 1.1rem; color: var(--accent); }
+  .feature p, .steps p { margin: 0; color: var(--muted); font-size: .92rem; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+  .steps li span {
+    display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-weight: 800; font-size: 1.2rem;
+  }
+
+  /* ===== الفوتر ===== */
+  .site-footer { text-align: start; margin-top: 48px; padding: 32px 16px 20px; background: rgba(20, 10, 4, .85); color: #e6cdb3; }
+  .fcols { max-width: 980px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 24px; }
+  .fbrand { font-size: 1.4rem; color: #f6b97a; }
+  .site-footer h3 { margin: 0 0 8px; color: #fff; font-size: 1rem; }
+  .site-footer p { margin: 6px 0 0; font-size: .9rem; }
+  .site-footer a { display: block; color: #e6cdb3; text-decoration: none; padding: 3px 0; }
+  .site-footer a:hover { color: #fff; }
+  .paychips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .paychips span { padding: 3px 10px; border-radius: 999px; background: rgba(255, 255, 255, .1); font-size: .85rem; }
+  .fbottom { max-width: 980px; margin: 24px auto 0; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, .12); text-align: center; font-size: .85rem; }
+  .fbottom a { display: inline; }
+  body.has-cart .site-footer { padding-bottom: 100px; }
+
   /* ===== تواصل معنا ===== */
   .contact-card {
     width: calc(100% - 32px); max-width: 640px; margin: 8px auto 32px; padding: 24px 20px;
@@ -524,18 +595,52 @@
 </head>
 <body>
 
-<header>
+<nav class="topbar" id="topbar">
+  <a class="brand" href="#top"><span>🥐</span><b class="brand-name"></b></a>
+  <div class="navlinks">
+    <a href="#menuSection">المنيو</a>
+    <a href="#why">ليه إحنا</a>
+    <a href="#how">إزاي تطلب</a>
+    <a href="#contactUs">تواصل معنا</a>
+  </div>
+  <button class="navcart" id="navCart" type="button" aria-label="السلة">🛒<span id="navCount">0</span></button>
+</nav>
+
+<header id="top">
   <div class="logo">🥐</div>
   <h1 id="name"></h1>
   <p>مخبوزات وحلويات طازة كل يوم</p>
   <div class="perks"><span>🔥 طازة يومياً</span><span>🛵 توصيل للبيت</span><span>💳 كاش وإنستاباي</span></div>
+  <div class="cta">
+    <a class="btn cta-main" href="#menuSection">🛍️ اطلب دلوقتي</a>
+    <a class="cta-wa" id="heroWa" target="_blank" rel="noopener">💬 كلّمنا واتساب</a>
+  </div>
 </header>
 
-<main>
+<main id="menuSection">
   <div class="searchbox"><input class="search" id="search" type="search" placeholder="ابحث عن صنف..."></div>
   <nav class="chips" id="chips"></nav>
   <div id="menu"></div>
 </main>
+
+<section class="band" id="why">
+  <h2 class="band-title">ليه تختار <span class="brand-name"></span>؟</h2>
+  <div class="features">
+    <div class="feature"><span>🔥</span><b>طازة كل يوم</b><p>بنخبز يومياً عشان توصلك المخبوزات سخنة وطرية.</p></div>
+    <div class="feature"><span>🛵</span><b>توصيل للبيت</b><p>اطلب من مكانك وإحنا نوصّلك لحد الباب.</p></div>
+    <div class="feature"><span>💳</span><b>دفع سهل</b><p>كاش عند الاستلام، أو إنستاباي، أو أي محفظة إلكترونية.</p></div>
+    <div class="feature"><span>📱</span><b>طلب في دقيقة</b><p>اختار من المنيو، والطلب يوصلنا على الواتساب على طول.</p></div>
+  </div>
+</section>
+
+<section class="band" id="how">
+  <h2 class="band-title">إزاي تطلب؟</h2>
+  <ol class="steps">
+    <li><span>1</span><b>اختار</b><p>دوس + على الأصناف اللي عايزها من المنيو.</p></li>
+    <li><span>2</span><b>اكتب بياناتك</b><p>توصيل أو استلام، وطريقة الدفع اللي تريحك.</p></li>
+    <li><span>3</span><b>ابعت</b><p>الطلب يوصلنا على الواتساب وتاخد إيصال بكل الأسعار.</p></li>
+  </ol>
+</section>
 
 <section class="contact-card" id="contactUs">
   <h2>✉️ تواصل معنا</h2>
@@ -553,7 +658,29 @@
   </div>
 </section>
 
-<footer id="contact"></footer>
+<footer class="site-footer">
+  <div class="fcols">
+    <div>
+      <div class="fbrand">🥐 <b class="brand-name"></b></div>
+      <p>مخبوزات وحلويات طازة كل يوم، بتوصلك لحد البيت.</p>
+    </div>
+    <div>
+      <h3>روابط</h3>
+      <a href="#menuSection">المنيو والأسعار</a>
+      <a href="#how">إزاي تطلب</a>
+      <a href="#contactUs">تواصل معنا</a>
+    </div>
+    <div>
+      <h3>كلّمنا</h3>
+      <div id="contact"></div>
+    </div>
+    <div>
+      <h3>طرق الدفع</h3>
+      <div class="paychips"><span>💵 كاش</span><span>⚡ إنستاباي</span><span>📱 محفظة</span></div>
+    </div>
+  </div>
+  <div class="fbottom">© <span id="year"></span> <span class="brand-name"></span> • <a href="images/CREDITS.txt">حقوق الصور</a></div>
+</footer>
 
 <button class="btn cartbar" id="cartbar" type="button">
   <span><span class="count" id="cartCount">0</span>عرض الطلب</span>
@@ -689,10 +816,11 @@
   document.title = "قائمة الأسعار - " + BAKERY_NAME;
 
   const contact = [];
-  if (PHONE) contact.push(`📞 <a href="tel:${PHONE}">${PHONE}</a> · <a href="https://wa.me/2${PHONE}">واتساب</a>`);
-  if (ADDRESS) contact.push(`📍 ${ADDRESS}`);
-  contact.push(`<small><a href="images/CREDITS.txt">حقوق الصور</a> (Wikimedia Commons)</small>`);
-  document.getElementById("contact").innerHTML = contact.join("<br>");
+  if (PHONE) contact.push(`<a href="tel:${PHONE}">📞 <span dir="ltr">${PHONE}</span></a>`, `<a href="https://wa.me/2${PHONE}" target="_blank" rel="noopener">💬 واتساب</a>`);
+  if (ADDRESS) contact.push(`<span>📍 ${ADDRESS}</span>`);
+  document.getElementById("contact").innerHTML = contact.join("");
+  document.querySelectorAll(".brand-name").forEach(el => el.textContent = BAKERY_NAME);
+  document.getElementById("year").textContent = new Date().getFullYear();
 
   const ITEMS = {};
   MENU.forEach(({ items }) => items.forEach(([name, price, pic = "🍞"]) => ITEMS[name] = { price, pic }));
@@ -814,6 +942,8 @@
     const n = count(), sub = subtotal();
     const fee = mode() === "delivery" && n ? DELIVERY_FEE : 0;
     $("cartCount").textContent = n;
+    $("navCount").textContent = n;
+    $("navCount").toggleAttribute("data-zero", !n);
     $("cartTotal").textContent = money(sub);
     $("cartbar").classList.toggle("show", n > 0);
     document.body.classList.toggle("has-cart", n > 0);
@@ -846,6 +976,8 @@
   const openSheet = () => { $("overlay").classList.add("open"); form.classList.add("open"); };
   function closeSheet() { $("overlay").classList.remove("open"); form.classList.remove("open"); }
   $("cartbar").onclick = openSheet;
+  $("navCart").onclick = () => count() ? openSheet() : $("menuSection").scrollIntoView();
+  addEventListener("scroll", () => $("topbar").classList.toggle("scrolled", scrollY > 40), { passive: true });
   $("overlay").onclick = closeSheet;
   $("close").onclick = closeSheet;
   form.addEventListener("change", e => { if (e.target.name === "mode" || e.target.name === "pay") update(); });
@@ -1009,6 +1141,7 @@
   $("waFloat").href = waLink(WELCOME_TEXT);
   $("welcomeWa").innerHTML = `${WA_ICON} كلّمنا على واتساب`;
   $("welcomeWa").href = waLink(WELCOME_TEXT);
+  $("heroWa").href = waLink(WELCOME_TEXT);
 
   const closeWelcome = () => { $("welcome").classList.remove("open"); $("welcomeOverlay").classList.remove("open"); };
   $("welcomeMenu").onclick = closeWelcome;
