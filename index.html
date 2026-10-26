@@ -648,10 +648,20 @@
   .prod { border-radius: 22px; background: #fffdf9; color: #3b2a1e; }
   @media (prefers-color-scheme: dark) { .prod { background: var(--card); color: var(--ink); } }
   .ph { aspect-ratio: 1 / 1; }
-  .ph::before { /* تدرّج خفيف تحت الصورة عشان السعر يبان */
-    content: ""; position: absolute; inset: auto 0 0 0; height: 45%; z-index: 1; pointer-events: none;
-    background: linear-gradient(to top, rgba(30, 14, 4, .55), transparent);
+  /* الصورة متبروزة جوه الكارت زي صورة على طبق، بإطار وظل داخلي ناعم */
+  .prod .ph {
+    margin: 8px 8px 0; border-radius: 16px;
+    box-shadow: 0 10px 22px -14px rgba(60, 25, 5, .7);
   }
+  .prod:hover .ph img { scale: 1.07; }
+  .ph::before { /* ظل ناعم على الأطراف + تدرّج تحت عشان السعر يبان */
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit;
+    background:
+      linear-gradient(to top, rgba(30, 14, 4, .5), transparent 42%),
+      radial-gradient(ellipse at 50% 45%, transparent 58%, rgba(30, 14, 4, .22));
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25);
+  }
+  .prod { padding-bottom: 2px; }
   .ph:not(:has(img))::before { display: none; }
   .price-tag {
     position: absolute; z-index: 2; bottom: 10px; inset-inline-start: 10px;

@@ -1,6 +1,4 @@
-﻿aish-baladi.jpg | File:Breakfast in Cairo.jpg | H. Hakan Atik | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Breakfast_in_Cairo.jpg
-fino.jpg | File:Banh mi - vietnamese bread - (cut out from flickr5607479129).jpg | Chris Conway, Hilleary Osheroff (flickr user "chrisandhilleary") | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Banh_mi_-_vietnamese_bread_-_(cut_out_from_flickr5607479129).jpg
-shami.jpg | File:Homemade hummus and pita 03.jpg | Satdeep Gill | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Homemade_hummus_and_pita_03.jpg
+﻿fino.jpg | File:Banh mi - vietnamese bread - (cut out from flickr5607479129).jpg | Chris Conway, Hilleary Osheroff (flickr user "chrisandhilleary") | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Banh_mi_-_vietnamese_bread_-_(cut_out_from_flickr5607479129).jpg
 toast.jpg | File:Tin Loaf - one slash in the crust.jpg | Mike Finn | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Tin_Loaf_-_one_slash_in_the_crust.jpg
 croissant.jpg | File:Croissants au beurre (18953292873).jpg | Herry Wibisono (herryway) | CC0 | https://commons.wikimedia.org/wiki/File:Croissants_au_beurre_(18953292873).jpg
 choco-croissant.jpg | File:Pain au chocolat Luc Viatour.jpg | Luc Viatour | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Pain_au_chocolat_Luc_Viatour.jpg
@@ -32,3 +30,5 @@ sw-croissant-cheese.jpg | File:Cheese & tomatoes croissant - ease 2025-06-14.jpg
 sw-chicken.jpg | File:Toasted sandwich with sesame seed bread.jpg | Chuq | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Toasted_sandwich_with_sesame_seed_bread.jpg
 sw-grilled-cheese.jpg | File:Grilled cheese sandwich.jpg | Maggie Hoffman | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Grilled_cheese_sandwich.jpg
 cappuccino.jpg | File:Cappuccino with latte art on Coffee Right in Brno, Brno-City District.jpg | Frettie | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:Cappuccino_with_latte_art_on_Coffee_Right_in_Brno,_Brno-City_District.jpg
+aish-baladi.jpg | File:Eish baladi.jpg | dustinpsmith | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Eish_baladi.jpg
+shami.jpg | File:Pita Flatbread.jpg | fugzu | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Pita_Flatbread.jpg
