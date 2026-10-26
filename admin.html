@@ -65,6 +65,40 @@
   .contact a { color: var(--accent); text-decoration: none; font-weight: 700; }
   .msg { white-space: pre-wrap; margin: 6px 0 0; }
   .empty { text-align: center; color: var(--muted); padding: 32px 0; }
+
+  /* تبويب المنيو */
+  .forms { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .addform h3 { margin: 0 0 10px; color: var(--accent); }
+  .addform .btn { width: 100%; margin-top: 4px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field select, .field input[type=file] { width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); }
+  .check { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: .92rem; cursor: pointer; }
+  .note { margin: 8px 0 0; text-align: center; font-size: .9rem; min-height: 1.3em; }
+  .note.ok { color: var(--delivered); } .note.bad { color: #c0392b; }
+  .tip { margin: 16px 0 8px; }
+  .catbox { margin-top: 18px; }
+  .cathead { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 8px; }
+  .cathead h3 { margin: 0; font-size: 1.15rem; }
+  .cathead .grow { flex: 1; }
+  .prow {
+    display: grid; grid-template-columns: 56px 1fr 110px auto; gap: 10px; align-items: center;
+    background: var(--card); border-radius: 14px; padding: 8px 10px; margin-bottom: 8px;
+    box-shadow: 0 6px 16px -12px rgba(0,0,0,.4);
+  }
+  .prow.off { opacity: .55; }
+  .thumb { width: 56px; height: 56px; border-radius: 12px; overflow: hidden; display: grid; place-items: center; font-size: 1.8rem; background: var(--bg); cursor: pointer; position: relative; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb::after { content: "📷"; position: absolute; inset-inline-end: 2px; bottom: 0; font-size: .8rem; }
+  .prow input[type=text], .prow input[type=number] { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); }
+  .pact { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: flex-end; }
+  .sm { padding: 6px 12px; border-radius: 10px; font-size: .85rem; }
+  .sm.save:disabled { opacity: .35; cursor: default; }
+  .sm.del { background: transparent; color: #c0392b; border: 1px solid rgba(192,57,43,.4); }
+  .switch { display: inline-flex; align-items: center; gap: 4px; font-size: .82rem; cursor: pointer; white-space: nowrap; }
+  @media (max-width: 640px) {
+    .prow { grid-template-columns: 56px 1fr 90px; }
+    .pact { grid-column: 1 / -1; justify-content: space-between; }
+  }
 </style>
 </head>
 <body>
@@ -98,6 +132,7 @@
     <div class="tabs">
       <button class="tab active" data-tab="orders" type="button">🛒 الطلبات</button>
       <button class="tab" data-tab="messages" type="button">✉️ الرسائل</button>
+      <button class="tab" data-tab="menu" type="button">🍞 المنيو والأسعار</button>
       <select id="filter" aria-label="فلتر الحالة">
         <option value="">كل الطلبات</option>
         <option value="new">جديد</option>
@@ -108,6 +143,32 @@
     </div>
     <div class="list" id="orders"></div>
     <div class="list hidden" id="messages"></div>
+
+    <div class="hidden" id="menuAdmin">
+      <div class="forms">
+        <form class="card addform" id="addProduct">
+          <h3>➕ صنف جديد</h3>
+          <label class="field"><span>اسم الصنف</span><input name="name" maxlength="100" required></label>
+          <div class="two">
+            <label class="field"><span>السعر (جنيه)</span><input name="price" type="number" min="0" step="1" inputmode="numeric" required></label>
+            <label class="field"><span>القسم</span><select name="category" required></select></label>
+          </div>
+          <label class="field"><span>الصورة (اختياري)</span><input name="photo" type="file" accept="image/jpeg,image/png,image/webp"></label>
+          <button class="btn" type="submit">إضافة الصنف</button>
+          <p class="note" id="addProductMsg"></p>
+        </form>
+        <form class="card addform" id="addCategory">
+          <h3>🗂️ قسم جديد</h3>
+          <label class="field"><span>اسم القسم</span><input name="name" maxlength="60" required></label>
+          <label class="check"><input name="hidden" type="checkbox"> قسم مقفول يتفتح بالضغط (زي المعجنات الدايت)</label>
+          <label class="field"><span>وصف قصير (اختياري)</span><input name="note" maxlength="200"></label>
+          <button class="btn ghost" type="submit">إضافة القسم</button>
+          <p class="note" id="addCategoryMsg"></p>
+        </form>
+      </div>
+      <p class="muted tip">💡 عدّل الاسم أو السعر واضغط <b>حفظ</b>. التعديل بيظهر في الموقع على طول لما الزبون يفتح الصفحة.</p>
+      <div id="menuList"></div>
+    </div>
   </div>
 </section>
 
@@ -235,10 +296,165 @@
   $("filter").onchange = renderOrders;
   document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
     document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x === t));
-    const isOrders = t.dataset.tab === "orders";
-    $("orders").classList.toggle("hidden", !isOrders);
-    $("messages").classList.toggle("hidden", isOrders);
-    $("filter").classList.toggle("hidden", !isOrders);
+    const tab = t.dataset.tab;
+    $("orders").classList.toggle("hidden", tab !== "orders");
+    $("messages").classList.toggle("hidden", tab !== "messages");
+    $("menuAdmin").classList.toggle("hidden", tab !== "menu");
+    $("filter").classList.toggle("hidden", tab !== "orders");
+    if (tab === "menu") loadMenuAdmin();
+  });
+
+  // ===== المنيو والأسعار =====
+  let cats = [], prods = [];
+  const isImg = s => /^(https?:|images\/)/.test(s || "");
+  const thumb = img => isImg(img) ? `<img src="${esc(img)}" alt="">` : esc(img || "🍞");
+
+  async function loadMenuAdmin() {
+    const [c, p] = await Promise.all([
+      db.from("categories").select("*").order("sort").order("id"),
+      db.from("products").select("*").order("sort").order("id"),
+    ]);
+    if (c.error || p.error) { $("appError").textContent = "مقدرتش أحمّل المنيو"; return; }
+    cats = c.data; prods = p.data;
+    $("addProduct").elements.category.innerHTML = cats.map(x => `<option value="${x.id}">${esc(x.name)}</option>`).join("");
+    renderMenuAdmin();
+  }
+
+  function renderMenuAdmin() {
+    $("menuList").innerHTML = cats.map(c => {
+      const rows = prods.filter(p => p.category_id === c.id).map(p => `
+        <div class="prow${p.available ? "" : " off"}" data-id="${p.id}">
+          <label class="thumb" title="تغيير الصورة">${thumb(p.image)}<input type="file" accept="image/jpeg,image/png,image/webp" hidden data-photo="${p.id}"></label>
+          <input type="text" value="${esc(p.name)}" data-f="name" maxlength="100" aria-label="اسم الصنف">
+          <input type="number" value="${p.price}" data-f="price" min="0" step="1" aria-label="السعر">
+          <div class="pact">
+            <label class="switch"><input type="checkbox" data-avail="${p.id}" ${p.available ? "checked" : ""}> ظاهر</label>
+            <button class="btn sm save" type="button" data-save="${p.id}" disabled>حفظ</button>
+            <button class="btn sm del" type="button" data-del="${p.id}">حذف</button>
+          </div>
+        </div>`).join("");
+      return `<section class="catbox">
+        <div class="cathead">
+          <h3>${c.hidden ? "🥗" : "📂"} ${esc(c.name)}</h3>
+          <span class="muted grow">${prods.filter(p => p.category_id === c.id).length} صنف</span>
+          <label class="switch"><input type="checkbox" data-cathidden="${c.id}" ${c.hidden ? "checked" : ""}> قسم مقفول</label>
+          <button class="btn sm del" type="button" data-catdel="${c.id}">حذف القسم</button>
+        </div>
+        ${rows || `<p class="muted">مفيش أصناف في القسم ده لسه.</p>`}
+      </section>`;
+    }).join("") || `<p class="empty">مفيش أقسام</p>`;
+  }
+
+  // يصغّر صورة الموبايل قبل الرفع (أقصى عرض 1000 بكسل)
+  async function shrink(file) {
+    const img = await createImageBitmap(file);
+    const scale = Math.min(1, 1000 / Math.max(img.width, img.height));
+    const cv = document.createElement("canvas");
+    cv.width = Math.round(img.width * scale); cv.height = Math.round(img.height * scale);
+    cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+    return new Promise(res => cv.toBlob(res, "image/jpeg", 0.85));
+  }
+  async function uploadPhoto(file) {
+    const blob = await shrink(file);
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
+    const { error } = await db.storage.from("products").upload(path, blob, { contentType: "image/jpeg" });
+    if (error) throw error;
+    return db.storage.from("products").getPublicUrl(path).data.publicUrl;
+  }
+
+  const say = (id, text, ok) => { $(id).textContent = text; $(id).className = "note " + (ok ? "ok" : "bad"); };
+
+  $("addProduct").addEventListener("submit", async e => {
+    e.preventDefault();
+    const f = e.target.elements, btn = e.target.querySelector("button");
+    const name = f.name.value.trim(), price = Number(f.price.value);
+    if (!name || !(price >= 0) || f.price.value === "") return say("addProductMsg", "اكتب الاسم والسعر", false);
+    btn.disabled = true; say("addProductMsg", "جاري الإضافة...", true);
+    try {
+      const image = f.photo.files[0] ? await uploadPhoto(f.photo.files[0]) : "🍞";
+      const catId = Number(f.category.value);
+      const sort = Math.max(0, ...prods.filter(p => p.category_id === catId).map(p => p.sort)) + 1;
+      const { error } = await db.from("products").insert({ category_id: catId, name, price, image, sort });
+      if (error) throw error;
+      e.target.reset();
+      say("addProductMsg", `✅ اتضاف "${name}"`, true);
+      loadMenuAdmin();
+    } catch { say("addProductMsg", "حصلت مشكلة، جرّب تاني", false); }
+    btn.disabled = false;
+  });
+
+  $("addCategory").addEventListener("submit", async e => {
+    e.preventDefault();
+    const f = e.target.elements;
+    const name = f.name.value.trim();
+    if (!name) return say("addCategoryMsg", "اكتب اسم القسم", false);
+    const sort = Math.max(0, ...cats.map(c => c.sort)) + 1;
+    const { error } = await db.from("categories").insert({ name, hidden: f.hidden.checked, note: f.note.value.trim() || null, sort });
+    if (error) return say("addCategoryMsg", error.code === "23505" ? "القسم ده موجود" : "حصلت مشكلة", false);
+    e.target.reset();
+    say("addCategoryMsg", `✅ اتضاف قسم "${name}"`, true);
+    loadMenuAdmin();
+  });
+
+  // تعديل الاسم/السعر بيفعّل زرار الحفظ
+  $("menuList").addEventListener("input", e => {
+    const row = e.target.closest(".prow");
+    if (row && e.target.dataset.f) row.querySelector("[data-save]").disabled = false;
+  });
+
+  $("menuList").addEventListener("click", async e => {
+    const save = e.target.closest("[data-save]"), del = e.target.closest("[data-del]"), catdel = e.target.closest("[data-catdel]");
+    if (save) {
+      const row = save.closest(".prow");
+      const name = row.querySelector('[data-f="name"]').value.trim();
+      const price = Number(row.querySelector('[data-f="price"]').value);
+      if (!name || !(price >= 0)) return alert("اكتب اسم وسعر صحيح");
+      save.disabled = true; save.textContent = "...";
+      const { error } = await db.from("products").update({ name, price }).eq("id", Number(save.dataset.save));
+      save.textContent = error ? "حفظ" : "✓ اتحفظ";
+      if (error) { save.disabled = false; alert("مقدرتش أحفظ، جرّب تاني"); }
+      else { const p = prods.find(x => x.id === Number(save.dataset.save)); Object.assign(p, { name, price }); setTimeout(() => save.textContent = "حفظ", 1500); }
+    }
+    if (del) {
+      const p = prods.find(x => x.id === Number(del.dataset.del));
+      if (!confirm(`حذف "${p.name}" نهائياً؟\n(لو عايز تخفيه مؤقتاً شيل علامة "ظاهر" بدل الحذف)`)) return;
+      const { error } = await db.from("products").delete().eq("id", p.id);
+      if (error) return alert("مقدرتش أحذف");
+      loadMenuAdmin();
+    }
+    if (catdel) {
+      const c = cats.find(x => x.id === Number(catdel.dataset.catdel));
+      const n = prods.filter(p => p.category_id === c.id).length;
+      if (!confirm(`حذف قسم "${c.name}"${n ? ` وكل أصنافه (${n})` : ""} نهائياً؟`)) return;
+      const { error } = await db.from("categories").delete().eq("id", c.id);
+      if (error) return alert("مقدرتش أحذف");
+      loadMenuAdmin();
+    }
+  });
+
+  $("menuList").addEventListener("change", async e => {
+    const avail = e.target.dataset.avail, cath = e.target.dataset.cathidden, photo = e.target.dataset.photo;
+    if (avail) {
+      const { error } = await db.from("products").update({ available: e.target.checked }).eq("id", Number(avail));
+      if (error) { e.target.checked = !e.target.checked; return alert("مقدرتش أغيّر"); }
+      e.target.closest(".prow").classList.toggle("off", !e.target.checked);
+      prods.find(p => p.id === Number(avail)).available = e.target.checked;
+    }
+    if (cath) {
+      const { error } = await db.from("categories").update({ hidden: e.target.checked }).eq("id", Number(cath));
+      if (error) { e.target.checked = !e.target.checked; return alert("مقدرتش أغيّر"); }
+      loadMenuAdmin();
+    }
+    if (photo && e.target.files[0]) {
+      const box = e.target.closest(".thumb");
+      box.style.opacity = .4;
+      try {
+        const image = await uploadPhoto(e.target.files[0]);
+        const { error } = await db.from("products").update({ image }).eq("id", Number(photo));
+        if (error) throw error;
+        loadMenuAdmin();
+      } catch { box.style.opacity = 1; alert("مقدرتش أرفع الصورة"); }
+    }
   });
 </script>
 </body>

@@ -20,8 +20,8 @@ as $$
     where lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
   );
 $$;
-revoke all on function public.is_admin() from public, anon;
-grant execute on function public.is_admin() to authenticated;
+revoke all on function public.is_admin() from public;
+grant execute on function public.is_admin() to anon, authenticated;
 
 -- الأدمن يقرا الطلبات ويغيّر حالتها بس
 drop policy if exists "admins read orders" on public.orders;
