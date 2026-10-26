@@ -12,3 +12,6 @@ choco-cake-slice.jpg | File:Piece of chocolate cake on a white plate decorated w
 basbousa.jpg | File:Basboosa.jpg | stu_spivack | CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:Basboosa.jpg
 kahk.jpg | File:Kahk.jpg | Michelle Sym | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Kahk.jpg
 butter-cookies.jpg | File:Danish butter cookies in container with wrappers, December 2009.jpg | Constantin Barbu | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Danish_butter_cookies_in_container_with_wrappers,_December_2009.jpg
+fruit-cake.jpg | File:Strawberry Cake.JPG | David | Public domain | https://commons.wikimedia.org/wiki/File:Strawberry_Cake.JPG
+black-forest.jpg | File:Black Forest gateau.jpg | Mikelo | CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:Black_Forest_gateau.jpg
+choco-cake.jpg | File:Chocolate Cake with a Decadent Ganache.jpg | روتانا | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Chocolate_Cake_with_a_Decadent_Ganache.jpg
