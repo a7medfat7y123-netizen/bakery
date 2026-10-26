@@ -455,6 +455,24 @@
   .toast.show { translate: -50% 0; opacity: 1; }
   @media (prefers-reduced-motion: reduce) { .logo { animation: none; } }
 
+  /* ===== تواصل معنا ===== */
+  .contact-card {
+    width: calc(100% - 32px); max-width: 640px; margin: 8px auto 32px; padding: 24px 20px;
+    background: var(--card); color: var(--ink); border-radius: 24px;
+    box-shadow: 0 14px 30px -14px rgba(0, 0, 0, .55);
+    scroll-margin-top: 16px;
+  }
+  body.has-cart .contact-card { margin-bottom: 110px; }
+  .contact-card h2 { margin: 0; color: var(--accent); font-size: 1.4rem; }
+  .contact-sub { margin: 4px 0 16px; color: var(--muted); }
+  .contact-card textarea { min-height: 110px; }
+  .send-msg { width: 100%; padding: 14px; border-radius: 16px; font-size: 1.05rem; margin-top: 4px; }
+  .send-msg:disabled { opacity: .6; cursor: wait; }
+  .contact-done { text-align: center; padding: 24px 8px; animation: fadeUp .4s ease-out; }
+  .contact-done span { font-size: 3rem; }
+  .contact-done p { margin: 8px 0 0; font-size: 1.15rem; font-weight: 700; }
+  main { margin-bottom: 24px; }
+
   /* ===== الإيصال ===== */
   #receiptOverlay { z-index: 32; }
   .receipt {
@@ -518,6 +536,22 @@
   <nav class="chips" id="chips"></nav>
   <div id="menu"></div>
 </main>
+
+<section class="contact-card" id="contactUs">
+  <h2>✉️ تواصل معنا</h2>
+  <p class="contact-sub">عندك سؤال أو طلب خاص؟ ابعتلنا وهنرد عليك.</p>
+  <form id="contactForm" novalidate>
+    <label class="field"><span>الاسم</span><input name="name" autocomplete="name" maxlength="100" required></label>
+    <label class="field"><span>رقم الموبايل</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" required></label>
+    <label class="field"><span>الرسالة</span><textarea name="message" maxlength="2000" required></textarea></label>
+    <button class="btn send-msg" type="submit">إرسال الرسالة</button>
+    <p class="error" id="contactError" role="alert"></p>
+  </form>
+  <div class="contact-done hidden" id="contactDone" role="status">
+    <span>✅</span>
+    <p>وصلتنا رسالتك، هنكلّمك في نفس اليوم.</p>
+  </div>
+</section>
 
 <footer id="contact"></footer>
 
@@ -613,6 +647,10 @@
   const ADDRESS = "";
   const INSTAPAY = "01096195589"; // رقم أو عنوان إنستاباي، مثال: "bakery@instapay"
   const WALLET = "01096195589";   // رقم المحفظة (فودافون كاش / اتصالات كاش / أورنج كاش / وي باي)
+  // Supabase: رسائل "تواصل معنا" ونسخة احتياطية من الطلبات
+  // ⚠️ المفتاح الـ publishable بس (sb_publishable_...) — ممنوع المفتاح الـ secret هنا
+  const SUPABASE_URL = "";
+  const SUPABASE_KEY = "";
   const DELIVERY_FEE = 20; // رسوم التوصيل
   const MIN_ORDER = 50;    // أقل قيمة للطلب مع التوصيل
 
@@ -853,8 +891,66 @@
     ].filter(l => l !== null).join("\n");
 
     window.open(`https://wa.me/2${PHONE}?text=${encodeURIComponent(msg)}`, "_blank");
+    backupOrder(order);
     cart = {}; saveCart(); render($("search").value); update();
     showReceipt(order);
+  });
+
+  // ===== النسخة الاحتياطية =====
+  function backupOrder(o) {
+    if (!SUPABASE_URL || !SUPABASE_KEY) return;
+    fetch(`${SUPABASE_URL}/rest/v1/orders`, {
+      method: "POST",
+      keepalive: true,
+      headers: {
+        apikey: SUPABASE_KEY,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({
+        order_no: o.no, items: o.lines, subtotal: o.sub, delivery_fee: o.fee, total: o.total,
+        delivery: o.delivery, payment: o.pay,
+        customer_name: o.name, customer_phone: o.phone,
+        address: o.address || null, notes: o.notes || null,
+      }),
+    }).catch(() => {}); // الطلب وصل على الواتساب في كل الأحوال
+  }
+
+  // ===== تواصل معنا =====
+  // الفورم مبيظهرش غير لما مفاتيح Supabase تتحط
+  if (!SUPABASE_URL || !SUPABASE_KEY) $("contactUs").classList.add("hidden");
+  $("contactForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const f = e.target.elements, btn = e.target.querySelector("button");
+    const data = { name: f.name.value.trim(), phone: f.phone.value.trim(), message: f.message.value.trim() };
+    const err = msg => { $("contactError").textContent = msg; };
+    if (!data.name) return err("من فضلك اكتب الاسم");
+    if (!/^[0-9+ ]{8,20}$/.test(data.phone)) return err("من فضلك اكتب رقم موبايل صحيح");
+    if (!data.message) return err("من فضلك اكتب رسالتك");
+    if (!SUPABASE_URL || !SUPABASE_KEY) return err("الفورم لسه مش متوصّل، كلّمنا على الواتساب");
+
+    err("");
+    btn.disabled = true;
+    btn.textContent = "جاري الإرسال...";
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/messages`, {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_KEY,
+          "Content-Type": "application/json",
+          Prefer: "return=minimal", // مفيش صلاحية قراية، فمنطلبش الصف يرجع
+        },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error(res.status);
+      e.target.classList.add("hidden");
+      $("contactDone").classList.remove("hidden");
+    } catch {
+      err("حصلت مشكلة في الإرسال، جرّب تاني أو كلّمنا على الواتساب");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "إرسال الرسالة";
+    }
   });
 
   // ===== الإيصال =====
