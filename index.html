@@ -276,6 +276,51 @@
   .pay b { direction: ltr; unicode-bidi: embed; user-select: all; }
   .send { width: 100%; padding: 14px; border-radius: 16px; font-size: 1.1rem; background: linear-gradient(180deg, #2fd06b, #1fa855); box-shadow: 0 4px 0 #157a3d, 0 10px 18px rgba(0, 0, 0, .2); }
   .send:active { box-shadow: 0 1px 0 #157a3d; }
+  /* ===== الترحيب والواتساب ===== */
+  .welcome {
+    position: fixed; z-index: 31; top: 50%; left: 50%;
+    width: min(400px, calc(100% - 32px));
+    translate: -50% -50%; scale: .85; opacity: 0; pointer-events: none;
+    transition: scale .35s cubic-bezier(.2, 1.4, .4, 1), opacity .25s;
+    background: var(--card); color: var(--ink);
+    border-radius: 24px; overflow: hidden; text-align: center;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, .4);
+  }
+  .welcome.open { scale: 1; opacity: 1; pointer-events: auto; }
+  .welcome .hero {
+    height: 140px;
+    background: linear-gradient(180deg, transparent 30%, var(--card)), url("images/croissant.jpg") center / cover;
+  }
+  .welcome .body { padding: 0 24px 24px; margin-top: -24px; position: relative; }
+  .welcome .wave { font-size: 2.6rem; display: inline-block; animation: wave 1.6s ease-in-out 2; transform-origin: 70% 70%; }
+  @keyframes wave { 0%, 60%, 100% { rotate: 0deg; } 10%, 30% { rotate: 16deg; } 20%, 40% { rotate: -10deg; } }
+  .welcome h2 { margin: 4px 0; font-size: 1.4rem; color: var(--accent); }
+  .welcome p { margin: 0 0 18px; color: var(--muted); }
+  .welcome .actions { display: grid; gap: 10px; }
+  .welcome .actions .btn { padding: 12px; border-radius: 14px; font-size: 1rem; }
+  #welcomeOverlay { z-index: 30; }
+
+  .wa-float {
+    position: fixed; z-index: 9; left: 16px; bottom: 16px;
+    width: 58px; height: 58px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: #25d366; color: #fff;
+    box-shadow: 0 4px 0 #128c4a, 0 10px 20px rgba(0, 0, 0, .3);
+    transition: bottom .35s cubic-bezier(.2, 1.4, .4, 1);
+  }
+  .wa-float::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    border: 2px solid #25d366; animation: ring 2s ease-out infinite;
+  }
+  @keyframes ring { to { scale: 1.6; opacity: 0; } }
+  body.has-cart .wa-float { bottom: 92px; }
+  .wa-float svg, .wa-btn svg { width: 30px; height: 30px; fill: currentColor; }
+  .wa-btn { display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+  .wa-btn svg { width: 22px; height: 22px; }
+  @media (prefers-reduced-motion: reduce) {
+    .wa-float::after, .welcome .wave { animation: none; }
+  }
+
   .error { color: #c0392b; font-size: .9rem; min-height: 1.2em; margin: 6px 0 0; text-align: center; }
 </style>
 </head>
@@ -297,6 +342,22 @@
   <span><span class="count" id="cartCount">0</span>عرض الطلب</span>
   <span id="cartTotal"></span>
 </button>
+
+<a class="wa-float" id="waFloat" target="_blank" rel="noopener" aria-label="كلمنا على واتساب"></a>
+
+<div class="overlay" id="welcomeOverlay"></div>
+<div class="welcome" id="welcome" role="dialog" aria-labelledby="welcomeTitle">
+  <div class="hero"></div>
+  <div class="body">
+    <span class="wave">👋</span>
+    <h2 id="welcomeTitle"></h2>
+    <p>مخبوزات وحلويات طازة كل يوم 🥐🎂<br>اطلب أونلاين ويوصلك لحد البيت 🛵</p>
+    <div class="actions">
+      <button class="btn" id="welcomeMenu" type="button">تصفّح المنيو واطلب</button>
+      <a class="btn send wa-btn" id="welcomeWa" target="_blank" rel="noopener"></a>
+    </div>
+  </div>
+</div>
 
 <div class="overlay" id="overlay"></div>
 <form class="sheet" id="sheet" novalidate>
@@ -493,6 +554,7 @@
 
     const fee = delivery ? DELIVERY_FEE : 0;
     const msg = [
+      `السلام عليكم 👋`,
       `🧁 *طلب جديد - ${BAKERY_NAME}*`,
       "",
       ...Object.entries(cart).map(([n, q]) => `• ${n} × ${q} = ${money(ITEMS[n].price * q)}`),
@@ -529,6 +591,27 @@
     const card = e.target.closest("section");
     if (card && !card.contains(e.relatedTarget)) card.style.transform = "";
   });
+
+  // ===== الترحيب والواتساب =====
+  const WELCOME_TEXT = `السلام عليكم 👋\nجاي من موقع ${BAKERY_NAME} وعايز أستفسر عن: `;
+  const WA_ICON = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-.9 1.2-.3.2-.6.1a8.2 8.2 0 0 1-4-3.5c-.3-.5.3-.5.9-1.6.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.8.4 3.5 3.5 0 0 0-1.1 2.6 6 6 0 0 0 1.3 3.2 13.9 13.9 0 0 0 5.3 4.7c2 .8 2.7.9 3.7.7a3.1 3.1 0 0 0 2-1.4 2.5 2.5 0 0 0 .2-1.4c-.1-.2-.3-.2-.6-.4zM12 21.8a9.9 9.9 0 0 1-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4A9.8 9.8 0 1 1 12 21.8zm8.4-18.2A11.8 11.8 0 0 0 1.8 17.8L.1 24l6.4-1.7a11.8 11.8 0 0 0 5.5 1.4 11.8 11.8 0 0 0 8.4-20.1z"/></svg>`;
+  const waLink = text => `https://wa.me/2${PHONE}?text=${encodeURIComponent(text)}`;
+
+  $("welcomeTitle").textContent = `أهلاً بيك في ${BAKERY_NAME}`;
+  $("waFloat").innerHTML = WA_ICON;
+  $("waFloat").href = waLink(WELCOME_TEXT);
+  $("welcomeWa").innerHTML = `${WA_ICON} كلّمنا على واتساب`;
+  $("welcomeWa").href = waLink(WELCOME_TEXT);
+
+  const closeWelcome = () => { $("welcome").classList.remove("open"); $("welcomeOverlay").classList.remove("open"); };
+  $("welcomeMenu").onclick = closeWelcome;
+  $("welcomeOverlay").onclick = closeWelcome;
+  $("welcomeWa").addEventListener("click", closeWelcome);
+
+  // يظهر الترحيب مرة واحدة لكل زبون
+  let seen = false;
+  try { seen = localStorage.getItem("welcomed") === "1"; localStorage.setItem("welcomed", "1"); } catch {}
+  if (!seen) setTimeout(() => { $("welcome").classList.add("open"); $("welcomeOverlay").classList.add("open"); }, 600);
 </script>
 </body>
 </html>
