@@ -74,8 +74,8 @@
   .item { align-items: center; }
   .pic {
     flex: none;
-    width: 56px;
-    height: 56px;
+    width: 72px;
+    height: 72px;
     border-radius: 14px;
     background: var(--bg);
     border: 1px solid var(--line);
@@ -188,24 +188,24 @@
   // الصورة: إيموجي، أو اسم ملف صورة في مجلد الموقع مثل "images/croissant.jpg"
   const MENU = [
     { category: "المخبوزات", items: [
-      ["عيش بلدي (الرغيف)", 1, "🫓"],
-      ["عيش فينو (الرغيف)", 2, "🥖"],
-      ["عيش شامي (الكيس)", 15, "🫓"],
-      ["توست (الكيس)", 35, "🍞"],
-      ["كرواسون سادة", 15, "🥐"],
-      ["كرواسون شوكولاتة", 20, "🥐"],
+      ["عيش بلدي (الرغيف)", 1, "images/aish-baladi.jpg"],
+      ["عيش فينو (الرغيف)", 2, "images/fino.jpg"],
+      ["عيش شامي (الكيس)", 15, "images/shami.jpg"],
+      ["توست (الكيس)", 35, "images/toast.jpg"],
+      ["كرواسون سادة", 15, "images/croissant.jpg"],
+      ["كرواسون شوكولاتة", 20, "images/choco-croissant.jpg"],
     ]},
     { category: "المعجنات", items: [
-      ["فطيرة جبنة", 25, "🧀"],
-      ["فطيرة لحمة مفرومة", 40, "🥟"],
-      ["بيتزا صغيرة", 45, "🍕"],
-      ["سينابون", 30, "🍥"],
+      ["فطيرة جبنة", 25, "images/cheese-pie.jpg"],
+      ["فطيرة لحمة مفرومة", 40, "images/meat-pie.jpg"],
+      ["بيتزا صغيرة", 45, "images/pizza.jpg"],
+      ["سينابون", 30, "images/cinnabon.jpg"],
     ]},
     { category: "الحلويات", items: [
-      ["كيك شوكولاتة (القطعة)", 25, "🍫"],
-      ["بسبوسة (الكيلو)", 120, "🍯"],
-      ["كحك العيد (الكيلو)", 200, "🍪"],
-      ["بسكويت بالسمن (الكيلو)", 150, "🍪"],
+      ["كيك شوكولاتة (القطعة)", 25, "images/choco-cake-slice.jpg"],
+      ["بسبوسة (الكيلو)", 120, "images/basbousa.jpg"],
+      ["كحك العيد (الكيلو)", 200, "images/kahk.jpg"],
+      ["بسكويت بالسمن (الكيلو)", 150, "images/butter-cookies.jpg"],
     ]},
     { category: "التورت", items: [
       ["تورتة شوكولاتة (صغيرة)", 250, "🎂"],
@@ -221,6 +221,7 @@
   const contact = [];
   if (PHONE) contact.push(`📞 <a href="tel:${PHONE}">${PHONE}</a> · <a href="https://wa.me/2${PHONE}">واتساب</a>`);
   if (ADDRESS) contact.push(`📍 ${ADDRESS}`);
+  contact.push(`<small><a href="images/CREDITS.txt">حقوق الصور</a> (Wikimedia Commons)</small>`);
   document.getElementById("contact").innerHTML = contact.join("<br>");
 
   function render(filter = "") {
