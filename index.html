@@ -608,10 +608,8 @@
   $("welcomeOverlay").onclick = closeWelcome;
   $("welcomeWa").addEventListener("click", closeWelcome);
 
-  // يظهر الترحيب مرة واحدة لكل زبون
-  let seen = false;
-  try { seen = localStorage.getItem("welcomed") === "1"; localStorage.setItem("welcomed", "1"); } catch {}
-  if (!seen) setTimeout(() => { $("welcome").classList.add("open"); $("welcomeOverlay").classList.add("open"); }, 600);
+  // يظهر الترحيب كل مرة يتفتح فيها الموقع
+  setTimeout(() => { $("welcome").classList.add("open"); $("welcomeOverlay").classList.add("open"); }, 600);
 </script>
 </body>
 </html>
