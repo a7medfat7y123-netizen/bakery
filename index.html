@@ -455,6 +455,28 @@
   .toast.show { translate: -50% 0; opacity: 1; }
   @media (prefers-reduced-motion: reduce) { .logo { animation: none; } }
 
+  /* ===== القسم المخفي (المعجنات الدايت) ===== */
+  .secret .grid { display: none; }
+  .secret.open .grid { display: grid; animation: fadeUp .35s ease-out; }
+  .reveal {
+    width: 100%; display: flex; align-items: center; gap: 14px; cursor: pointer;
+    padding: 16px 18px; margin-bottom: 14px; border: 2px dashed #7fd19b; border-radius: 20px;
+    background: linear-gradient(135deg, rgba(31, 157, 85, .92), rgba(18, 110, 60, .92));
+    color: #fff; font: inherit; text-align: start;
+    box-shadow: 0 14px 30px -14px rgba(0, 0, 0, .6);
+    transition: transform .2s;
+  }
+  .reveal:hover { transform: translateY(-2px); }
+  .r-ico { font-size: 2.2rem; flex: none; }
+  .r-txt { flex: 1; display: flex; flex-direction: column; line-height: 1.4; }
+  .r-txt b { font-size: 1.25rem; }
+  .r-txt small { opacity: .9; }
+  .r-cta { flex: none; padding: 6px 14px; border-radius: 999px; background: #fff; color: #1f9d55; font-weight: 800; font-size: .9rem; }
+  .secret:not(.open) .reveal { animation: nudge 2.4s ease-in-out infinite; }
+  @keyframes nudge { 0%, 85%, 100% { translate: 0 0; } 90% { translate: 0 -4px; } 95% { translate: 0 2px; } }
+  @media (prefers-reduced-motion: reduce) { .secret .reveal { animation: none; } }
+  @media (max-width: 420px) { .r-cta { font-size: .78rem; padding: 4px 10px; } }
+
   /* ===== شريط التنقل ===== */
   .topbar {
     position: fixed; z-index: 15; top: 0; inset-inline: 0; height: 60px;
@@ -809,6 +831,14 @@
       ["تورتة فانيليا بالفواكه (صغيرة)", 280, "images/fruit-cake.jpg"],
       ["تورتة بلاك فورست (كبيرة)", 450, "images/black-forest.jpg"],
     ]},
+    // hidden: true = القسم مقفول ويتفتح لما الزبون يدوس عليه
+    { category: "المعجنات الدايت", hidden: true, note: "🥗 قليلة السعرات، بالقمح الكامل والشوفان", items: [
+      ["فطيرة جبنة لايت بالشوفان", 35, "🥧"],
+      ["بيتزا دايت بعجينة القمح الكامل", 55, "🍕"],
+      ["كرواسون قمح كامل", 25, "🥐"],
+      ["عيش شوفان (الكيس)", 30, "🍞"],
+      ["بسكويت شوفان بدون سكر (الكيلو)", 120, "🍪"],
+    ]},
   ];
   // ===== نهاية البيانات =====
 
@@ -839,14 +869,16 @@
 
   const qtyBadge = name => cart[name] ? `<span class="qty">${cart[name]}</span>` : "";
 
+  const opened = new Set(); // الأقسام المخفية اللي الزبون فتحها
+
   function render(filter = "") {
     const q = filter.trim();
-    const shown = MENU.map(({ category, items }, i) => ({
-      id: `cat-${i}`, category,
+    const shown = MENU.map(({ category, items, hidden, note }, i) => ({
+      id: `cat-${i}`, category, hidden, note,
       items: items.filter(([name]) => !q || name.includes(q) || category.includes(q)),
     })).filter(c => c.items.length);
 
-    document.getElementById("menu").innerHTML = shown.map(({ id, category, items }) => {
+    document.getElementById("menu").innerHTML = shown.map(({ id, category, items, hidden, note }) => {
       const cards = items.map(([name, price, pic = "🍞"]) => {
         const img = isImg(pic) ? `<img src="${pic}" alt="${name}" loading="lazy">` : pic;
         return `<article class="prod">
@@ -855,6 +887,16 @@
             <div class="row"><span class="pr">${price} <small>${CURRENCY}</small></span><div class="ctl" data-ctl="${name}">${control(name)}</div></div>
           </div></article>`;
       }).join("");
+      if (hidden) {
+        const open = q || opened.has(id); // البحث بيفتح القسم تلقائياً
+        return `<section class="cat secret${open ? " open" : ""}" id="${id}">
+          <button class="reveal" type="button" data-reveal="${id}" aria-expanded="${!!open}">
+            <span class="r-ico">🥗</span>
+            <span class="r-txt"><b>${category}</b><small>${note || ""}</small></span>
+            <span class="r-cta">${open ? "إخفاء ▲" : `اضغط للعرض (${items.length}) ▼`}</span>
+          </button>
+          <div class="grid">${cards}</div></section>`;
+      }
       return `<section class="cat" id="${id}"><h2>${category} <small>${items.length} أصناف</small></h2><div class="grid">${cards}</div></section>`;
     }).join("") || `<p class="empty">لا توجد نتائج</p>`;
 
@@ -862,6 +904,26 @@
       `<a href="#${id}" class="${i ? "" : "active"}">${category}</a>`).join("");
     watchSections();
   }
+
+  // فتح وقفل القسم المخفي (من الزرار نفسه أو من شريط الأقسام)
+  function toggleSecret(id, forceOpen) {
+    const willOpen = forceOpen ?? !opened.has(id);
+    willOpen ? opened.add(id) : opened.delete(id);
+    render($("search").value);
+    if (willOpen) document.getElementById(id)?.scrollIntoView({ block: "start" });
+  }
+  document.getElementById("menu").addEventListener("click", e => {
+    const b = e.target.closest("[data-reveal]");
+    if (b) toggleSecret(b.dataset.reveal);
+  });
+  document.getElementById("chips").addEventListener("click", e => {
+    const a = e.target.closest("a");
+    const sec = a && document.querySelector(a.getAttribute("href"));
+    if (sec?.classList.contains("secret") && !sec.classList.contains("open")) {
+      e.preventDefault();
+      toggleSecret(sec.id, true);
+    }
+  });
 
   // تمييز القسم الظاهر في شريط الأقسام
   let spy;
