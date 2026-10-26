@@ -265,15 +265,61 @@
   .totals div { display: flex; justify-content: space-between; padding: 3px 0; }
   .totals .grand { font-weight: 800; font-size: 1.15rem; border-top: 1px dashed var(--line); margin-top: 6px; padding-top: 8px; }
   .sub-h { margin: 8px 0 0; font-size: 1rem; }
-  .seg3 { grid-template-columns: repeat(3, 1fr); margin-top: 8px; }
-  .seg3 label { padding: 10px 4px; text-align: center; }
-  .seg3 .ico { font-size: 1.4rem; }
-  .seg3 small { font-size: .75rem; }
-  .pay {
-    font-size: .9rem; text-align: center; margin: 0 0 16px;
-    background: var(--bg); border: 1px dashed var(--line); border-radius: 12px; padding: 10px 12px;
+  .paylist { display: grid; gap: 10px; margin: 10px 0 12px; }
+  .payopt {
+    position: relative;
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: 18px; cursor: pointer;
+    background: var(--bg); border: 2px solid var(--line);
+    transition: border-color .2s, background .2s, transform .2s, box-shadow .2s;
   }
-  .pay b { direction: ltr; unicode-bidi: embed; user-select: all; }
+  .payopt input { position: absolute; opacity: 0; }
+  .payopt:has(input:checked) {
+    border-color: var(--c);
+    background: color-mix(in srgb, var(--c) 8%, var(--card));
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -10px color-mix(in srgb, var(--c) 60%, transparent);
+  }
+  .payopt:has(input:focus-visible) { outline: 2px solid var(--c); outline-offset: 2px; }
+  .pico {
+    flex: none; width: 46px; height: 46px; border-radius: 14px;
+    display: grid; place-items: center; font-size: 1.5rem;
+    background: color-mix(in srgb, var(--c) 14%, var(--card));
+    box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--c) 20%, transparent);
+  }
+  .ptxt { flex: 1; display: flex; flex-direction: column; line-height: 1.35; }
+  .ptxt small { color: var(--muted); font-size: .8rem; }
+  .radio {
+    flex: none; width: 24px; height: 24px; border-radius: 50%;
+    border: 2px solid var(--line); background: var(--card);
+    display: grid; place-items: center; transition: all .2s;
+  }
+  .payopt:has(input:checked) .radio { border-color: var(--c); background: var(--c); }
+  .payopt:has(input:checked) .radio::after { content: "✓"; color: #fff; font-size: .8rem; font-weight: 800; }
+
+  .paybox {
+    margin: 0 0 16px; padding: 16px; border-radius: 18px;
+    font-size: .92rem; color: #fff; text-align: center;
+    background: linear-gradient(135deg, var(--c, #1f9d55), color-mix(in srgb, var(--c, #1f9d55) 70%, #000));
+    box-shadow: 0 12px 24px -12px rgba(0, 0, 0, .5);
+    animation: fadeUp .3s ease-out;
+  }
+  @keyframes fadeUp { from { opacity: 0; translate: 0 8px; } }
+  .paybox .amount { font-size: 1.6rem; font-weight: 800; margin: 2px 0 10px; }
+  .paybox .num {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    background: rgba(255, 255, 255, .16); border: 1px dashed rgba(255, 255, 255, .5);
+    border-radius: 14px; padding: 8px 8px 8px 14px; margin-bottom: 10px;
+  }
+  .paybox .num b { font-size: 1.25rem; letter-spacing: .08em; direction: ltr; }
+  .paybox .copy {
+    font: inherit; font-weight: 700; cursor: pointer;
+    border: none; border-radius: 10px; padding: 6px 14px;
+    background: #fff; color: var(--c, #1f9d55);
+  }
+  .paybox ol { margin: 0; padding: 0 18px 0 0; text-align: right; line-height: 1.9; }
+  .paybox .note { display: flex; align-items: center; gap: 12px; text-align: right; }
+  .paybox .note span { font-size: 2rem; }
   .send { width: 100%; padding: 14px; border-radius: 16px; font-size: 1.1rem; background: linear-gradient(180deg, #2fd06b, #1fa855); box-shadow: 0 4px 0 #157a3d, 0 10px 18px rgba(0, 0, 0, .2); }
   .send:active { box-shadow: 0 1px 0 #157a3d; }
   /* ===== الترحيب والواتساب ===== */
@@ -385,12 +431,27 @@
     <div class="grand"><span>الإجمالي</span><span id="grand"></span></div>
   </div>
   <h3 class="sub-h">طريقة الدفع</h3>
-  <div class="seg seg3">
-    <label><input type="radio" name="pay" value="cash" checked><span class="ico">💵</span><b>كاش</b><small>عند الاستلام</small></label>
-    <label><input type="radio" name="pay" value="instapay"><span class="ico">⚡</span><b>إنستاباي</b><small>InstaPay</small></label>
-    <label><input type="radio" name="pay" value="wallet"><span class="ico">📱</span><b>محفظة</b><small>فودافون كاش وغيرها</small></label>
+  <div class="paylist">
+    <label class="payopt" style="--c:#1f9d55">
+      <input type="radio" name="pay" value="cash" checked>
+      <span class="pico">💵</span>
+      <span class="ptxt"><b>كاش</b><small>ادفع وقت الاستلام</small></span>
+      <span class="radio"></span>
+    </label>
+    <label class="payopt" style="--c:#6d3fc0">
+      <input type="radio" name="pay" value="instapay">
+      <span class="pico">⚡</span>
+      <span class="ptxt"><b>إنستاباي</b><small>تحويل فوري من أي بنك</small></span>
+      <span class="radio"></span>
+    </label>
+    <label class="payopt" style="--c:#d6342c">
+      <input type="radio" name="pay" value="wallet">
+      <span class="pico">📱</span>
+      <span class="ptxt"><b>محفظة إلكترونية</b><small>فودافون كاش • اتصالات • أورنج • وي</small></span>
+      <span class="radio"></span>
+    </label>
   </div>
-  <p class="pay" id="payInfo"></p>
+  <div class="paybox" id="payInfo"></div>
 
   <button class="btn send" type="submit">إرسال الطلب على واتساب</button>
   <p class="error" id="error"></p>
@@ -486,12 +547,32 @@
   const mode = () => form.elements.mode.value;
   const pay = () => form.elements.pay.value;
   const PAY_NAMES = { cash: "💵 كاش عند الاستلام", instapay: "⚡ إنستاباي", wallet: "📱 محفظة إلكترونية" };
+  const PAY_COLORS = { cash: "#1f9d55", instapay: "#6d3fc0", wallet: "#d6342c" };
   function payInfo(total) {
-    const later = "هنبعتلك بيانات التحويل على الواتساب بعد تأكيد الطلب";
-    if (pay() === "instapay") return INSTAPAY ? `حوّل <b>${money(total)}</b> على إنستاباي: <b>${INSTAPAY}</b><br>وابعت صورة التحويل في الواتساب` : later;
-    if (pay() === "wallet") return WALLET ? `حوّل <b>${money(total)}</b> على رقم المحفظة: <b>${WALLET}</b><br>وابعت صورة التحويل في الواتساب` : later;
-    return mode() === "delivery" ? "ادفع كاش للمندوب وقت التوصيل" : "ادفع كاش وقت استلام الطلب من المخبز";
+    const note = (icon, text) => `<div class="note"><span>${icon}</span><div>${text}</div></div>`;
+    const transfer = (label, num, app) => num ? `
+      <div>المبلغ المطلوب تحويله</div>
+      <div class="amount">${money(total)}</div>
+      <div class="num"><b>${num}</b><button class="copy" type="button" data-copy="${num}">نسخ</button></div>
+      <ol>
+        <li>افتح ${app} وحوّل المبلغ على ${label}</li>
+        <li>اضغط "إرسال الطلب على واتساب"</li>
+        <li>ابعت صورة التحويل في نفس المحادثة ✅</li>
+      </ol>` : note("💬", "هنبعتلك بيانات التحويل على الواتساب بعد تأكيد الطلب");
+    if (pay() === "instapay") return transfer("الرقم ده", INSTAPAY, "تطبيق إنستاباي");
+    if (pay() === "wallet") return transfer("رقم المحفظة ده", WALLET, "محفظتك");
+    return note("🤝", mode() === "delivery"
+      ? `<b>ادفع ${money(total)} كاش للمندوب</b><br>وقت ما الطلب يوصلك`
+      : `<b>ادفع ${money(total)} كاش</b><br>وقت ما تستلم طلبك من المخبز`);
   }
+
+  document.addEventListener("click", async e => {
+    const btn = e.target.closest("[data-copy]");
+    if (!btn) return;
+    try { await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent = "تم النسخ ✓"; }
+    catch { btn.textContent = "انسخه يدوياً"; }
+    setTimeout(() => btn.textContent = "نسخ", 1800);
+  });
   const subtotal = () => Object.entries(cart).reduce((s, [n, q]) => s + ITEMS[n].price * q, 0);
   const count = () => Object.values(cart).reduce((s, q) => s + q, 0);
   $("feeLabel").textContent = money(DELIVERY_FEE);
@@ -523,6 +604,8 @@
     $("fee").textContent = money(fee);
     $("grand").textContent = money(sub + fee);
     $("payInfo").innerHTML = payInfo(sub + fee);
+    $("payInfo").style.setProperty("--c", PAY_COLORS[pay()]);
+    $("payInfo").style.animation = "none"; void $("payInfo").offsetWidth; $("payInfo").style.animation = "";
     $("feeRow").classList.toggle("hidden", mode() !== "delivery");
     $("addrField").classList.toggle("hidden", mode() !== "delivery");
     $("error").textContent = "";
