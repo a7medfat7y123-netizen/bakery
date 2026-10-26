@@ -32,3 +32,22 @@ sw-grilled-cheese.jpg | File:Grilled cheese sandwich.jpg | Maggie Hoffman | CC B
 cappuccino.jpg | File:Cappuccino with latte art on Coffee Right in Brno, Brno-City District.jpg | Frettie | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:Cappuccino_with_latte_art_on_Coffee_Right_in_Brno,_Brno-City_District.jpg
 aish-baladi.jpg | File:Eish baladi.jpg | dustinpsmith | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Eish_baladi.jpg
 shami.jpg | File:Pita Flatbread.jpg | fugzu | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Pita_Flatbread.jpg
+croissant.webp | File:Croissants au beurre (18953292873).jpg | Herry Wibisono (herryway) | CC0 | https://commons.wikimedia.org/wiki/File:Croissants_au_beurre_(18953292873).jpg (background removed)
+choco-croissant.webp | File:Pain au chocolat Luc Viatour.jpg | Luc Viatour | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Pain_au_chocolat_Luc_Viatour.jpg (background removed)
+cinnabon.webp | File:Rollo de canela (Cinnamon roll).jpg | Horacio Cambeiro | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Rollo_de_canela_(Cinnamon_roll).jpg (background removed)
+donut.webp | File:Glazed doughnut (1387333).jpg | Unknown authorUnknown author | CC0 | https://commons.wikimedia.org/wiki/File:Glazed_doughnut_(1387333).jpg (background removed)
+oat-bread.webp | File:Pumpkin Pie and Honey Oat Loaf.jpg | Alex Barrow | CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:Pumpkin_Pie_and_Honey_Oat_Loaf.jpg (cropped) (background removed)
+shami.webp | File:Pita Flatbread.jpg | fugzu | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Pita_Flatbread.jpg (background removed)
+fino.webp | File:Banh mi - vietnamese bread - (cut out from flickr5607479129).jpg | Chris Conway, Hilleary Osheroff (flickr user "chrisandhilleary") | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Banh_mi_-_vietnamese_bread_-_(cut_out_from_flickr5607479129).jpg (background removed)
+toast.webp | File:Tin Loaf - one slash in the crust.jpg | Mike Finn | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Tin_Loaf_-_one_slash_in_the_crust.jpg (background removed)
+pizza.webp | File:Margherita Originale.JPG | Mario56 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Margherita_Originale.JPG (background removed)
+diet-pizza.webp | File:Whole wheat pizza - September 2013 18.jpg | Wheeler Cowperthwaite | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Whole_wheat_pizza_-_September_2013_18.jpg (background removed)
+diet-cheese-pie.webp | File:Tiropita Greek dish.jpg | Tanya Bakogiannis | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:Tiropita_Greek_dish.jpg (background removed)
+meat-pie.webp | File:Egyptian meatloaf.jpg | Mkevy | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Egyptian_meatloaf.jpg (background removed)
+sw-chicken.webp | File:Toasted sandwich with sesame seed bread.jpg | Chuq | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Toasted_sandwich_with_sesame_seed_bread.jpg (background removed)
+sw-grilled-cheese.webp | File:Grilled cheese sandwich.jpg | Maggie Hoffman | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Grilled_cheese_sandwich.jpg (background removed)
+choco-cake.webp | File:Chocolate Cake with a Decadent Ganache.jpg | روتانا | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Chocolate_Cake_with_a_Decadent_Ganache.jpg (background removed)
+choco-cake-slice.webp | File:Piece of chocolate cake on a white plate decorated with chocolate sauce.jpg | Daria YakovlevaMinor edits made by Subsidiary account | CC0 | https://commons.wikimedia.org/wiki/File:Piece_of_chocolate_cake_on_a_white_plate_decorated_with_chocolate_sauce.jpg (background removed)
+mint-tea.webp | File:Fresh mint tea in a glass.jpg | Mark Jason Dominus | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Fresh_mint_tea_in_a_glass.jpg (background removed)
+orange-juice.webp | File:Orange juice 1 edit1.jpg | Agency of the United States Department of Agriculture (background removed)
+cappuccino.webp | File:Cappuccino with latte art on Coffee Right in Brno, Brno-City District.jpg | Frettie | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:Cappuccino_with_latte_art_on_Coffee_Right_in_Brno,_Brno-City_District.jpg (background removed)

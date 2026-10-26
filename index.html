@@ -662,6 +662,34 @@
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25);
   }
   .prod { padding-bottom: 2px; }
+
+  /* ===== المنتجات مقصوصة من غير أطباق: طايرة على خلفية دافية بظل طبيعي ===== */
+  .ph.cutout {
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 42%, #fffaf1 0%, #fbe8cc 55%, #f2cf9f 100%);
+    box-shadow: inset 0 -18px 30px -20px rgba(140, 70, 15, .35), 0 10px 22px -14px rgba(60, 25, 5, .55);
+  }
+  .ph.cutout::before { display: none; }
+  .ph.cutout::after { /* ظل المنتج على "الترابيزة" */
+    content: ""; position: absolute; z-index: 0; left: 18%; right: 18%; bottom: 9%; height: 9%;
+    border-radius: 50%; background: radial-gradient(closest-side, rgba(90, 40, 8, .35), transparent);
+    filter: blur(2px); transition: transform .4s, opacity .4s;
+  }
+  .ph.cutout img {
+    position: relative; z-index: 1; object-fit: contain; padding: 6%;
+    filter: drop-shadow(0 10px 10px rgba(80, 35, 5, .35)) drop-shadow(0 2px 2px rgba(80, 35, 5, .25));
+    transition: transform .45s cubic-bezier(.2, 1.3, .4, 1), filter .45s;
+  }
+  .prod:hover .ph.cutout img { scale: 1; transform: translateY(-8px) scale(1.06) rotate(-2deg); filter: drop-shadow(0 18px 14px rgba(80, 35, 5, .35)); }
+  .prod:hover .ph.cutout::after { transform: scaleX(.85); opacity: .7; }
+  .ph.cutout .price-tag { background: #3b2a1e; color: #ffe2b0; }
+  .secret .ph.cutout { background: radial-gradient(ellipse 70% 55% at 50% 42%, #fbfff8 0%, #e3f5e8 60%, #bfe5c9 100%); }
+  .secret .ph.cutout .price-tag { background: #126e3c; color: #fff; }
+  .secret .ph.cutout::after { z-index: 2; } /* علامة "دايت" تفضل فوق */
+  @media (prefers-color-scheme: dark) {
+    .ph.cutout { background: radial-gradient(ellipse 70% 55% at 50% 42%, #4a3424 0%, #33231a 60%, #241811 100%); }
+  }
+  @media (prefers-reduced-motion: reduce) { .ph.cutout img { transition: none; } }
   .ph:not(:has(img))::before { display: none; }
   .price-tag {
     position: absolute; z-index: 2; bottom: 10px; inset-inline-start: 10px;
@@ -1088,25 +1116,25 @@
   let MENU = [
     { category: "المخبوزات", items: [
       ["عيش بلدي (الرغيف)", 1, "images/aish-baladi.jpg"],
-      ["عيش فينو (الرغيف)", 2, "images/fino.jpg"],
-      ["عيش شامي (الكيس)", 15, "images/shami.jpg"],
-      ["توست (الكيس)", 35, "images/toast.jpg"],
-      ["كرواسون سادة", 15, "images/croissant.jpg"],
-      ["كرواسون شوكولاتة", 20, "images/choco-croissant.jpg"],
+      ["عيش فينو (الرغيف)", 2, "images/fino.webp"],
+      ["عيش شامي (الكيس)", 15, "images/shami.webp"],
+      ["توست (الكيس)", 35, "images/toast.webp"],
+      ["كرواسون سادة", 15, "images/croissant.webp"],
+      ["كرواسون شوكولاتة", 20, "images/choco-croissant.webp"],
     ]},
     { category: "المعجنات", items: [
       ["فطيرة جبنة", 25, "images/cheese-pie.jpg"],
-      ["فطيرة لحمة مفرومة", 40, "images/meat-pie.jpg"],
-      ["بيتزا صغيرة", 45, "images/pizza.jpg"],
-      ["سينابون", 30, "images/cinnabon.jpg"],
+      ["فطيرة لحمة مفرومة", 40, "images/meat-pie.webp"],
+      ["بيتزا صغيرة", 45, "images/pizza.webp"],
+      ["سينابون", 30, "images/cinnabon.webp"],
     ]},
     { category: "الساندوتشات", items: [
-      ["توست بالجبنة الشيدر السايحة", 30, "images/sw-grilled-cheese.jpg"],
+      ["توست بالجبنة الشيدر السايحة", 30, "images/sw-grilled-cheese.webp"],
       ["كرواسون جبنة وطماطم", 30, "images/sw-croissant-cheese.jpg"],
-      ["ساندوتش فراخ بالجرجير (عيش سمسم)", 55, "images/sw-chicken.jpg"],
+      ["ساندوتش فراخ بالجرجير (عيش سمسم)", 55, "images/sw-chicken.webp"],
     ]},
     { category: "الحلويات", items: [
-      ["كيك شوكولاتة (القطعة)", 25, "images/choco-cake-slice.jpg"],
+      ["كيك شوكولاتة (القطعة)", 25, "images/choco-cake-slice.webp"],
       ["بسبوسة (الكيلو)", 120, "images/basbousa.jpg"],
       ["كحك العيد (الكيلو)", 200, "images/kahk.jpg"],
       ["بسكويت بالسمن (الكيلو)", 150, "images/butter-cookies.jpg"],
@@ -1114,26 +1142,26 @@
     { category: "الكيك والمافن", items: [
       ["مافن شوكولاتة شيبس", 20, "images/muffin-choco.jpg"],
       ["مافن بلوبيري", 25, "images/muffin-blueberry.jpg"],
-      ["دوناتس شوكولاتة", 15, "images/donut.jpg"],
+      ["دوناتس شوكولاتة", 15, "images/donut.webp"],
       ["براونيز (القطعة)", 25, "images/brownie.jpg"],
     ]},
     { category: "التورت", items: [
-      ["تورتة شوكولاتة (صغيرة)", 250, "images/choco-cake.jpg"],
+      ["تورتة شوكولاتة (صغيرة)", 250, "images/choco-cake.webp"],
       ["تورتة فانيليا بالفواكه (صغيرة)", 280, "images/fruit-cake.jpg"],
       ["تورتة بلاك فورست (كبيرة)", 450, "images/black-forest.jpg"],
     ]},
     // hidden: true = القسم مقفول ويتفتح لما الزبون يدوس عليه
     { category: "المشروبات", items: [
       ["قهوة تركي", 20, "images/turkish-coffee.jpg"],
-      ["كابتشينو", 35, "images/cappuccino.jpg"],
-      ["شاي بالنعناع", 10, "images/mint-tea.jpg"],
-      ["عصير برتقال فريش", 30, "images/orange-juice.jpg"],
+      ["كابتشينو", 35, "images/cappuccino.webp"],
+      ["شاي بالنعناع", 10, "images/mint-tea.webp"],
+      ["عصير برتقال فريش", 30, "images/orange-juice.webp"],
     ]},
     { category: "المعجنات الدايت", hidden: true, note: "🥗 قليلة السعرات، بالقمح الكامل والشوفان", items: [
-      ["فطيرة جبنة لايت بالشوفان", 35, "images/diet-cheese-pie.jpg"],
-      ["بيتزا دايت بعجينة القمح الكامل", 55, "images/diet-pizza.jpg"],
+      ["فطيرة جبنة لايت بالشوفان", 35, "images/diet-cheese-pie.webp"],
+      ["بيتزا دايت بعجينة القمح الكامل", 55, "images/diet-pizza.webp"],
       ["كرواسون قمح كامل", 25, "🥐"],
-      ["عيش شوفان (الكيس)", 30, "images/oat-bread.jpg"],
+      ["عيش شوفان (الكيس)", 30, "images/oat-bread.webp"],
       ["بسكويت شوفان بدون سكر (الكيلو)", 120, "images/oat-cookies.jpg"],
     ]},
   ];
@@ -1187,7 +1215,7 @@
       const cards = items.map(([name, price, pic = "🍞"]) => {
         const img = isImg(pic) ? `<img src="${pic}" alt="${name}" loading="lazy">` : pic;
         return `<article class="prod">
-          <div class="ph">${img}<span class="price-tag">${price} <small>${CURRENCY}</small></span><span data-badge="${name}">${qtyBadge(name)}</span></div>
+          <div class="ph${/\.webp(\?.*)?$/i.test(pic) ? " cutout" : ""}">${img}<span class="price-tag">${price} <small>${CURRENCY}</small></span><span data-badge="${name}">${qtyBadge(name)}</span></div>
           <div class="pb"><h3>${name}</h3><div class="ctl" data-ctl="${name}">${control(name)}</div></div>
         </article>`;
       }).join("");
