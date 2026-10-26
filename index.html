@@ -454,6 +454,54 @@
   }
   .toast.show { translate: -50% 0; opacity: 1; }
   @media (prefers-reduced-motion: reduce) { .logo { animation: none; } }
+
+  /* ===== الإيصال ===== */
+  #receiptOverlay { z-index: 32; }
+  .receipt {
+    position: fixed; z-index: 33; top: 50%; left: 50%;
+    width: min(420px, calc(100% - 32px)); max-height: calc(100vh - 32px); overflow-y: auto;
+    translate: -50% -45%; opacity: 0; pointer-events: none;
+    transition: translate .4s cubic-bezier(.2, 1.2, .4, 1), opacity .25s;
+  }
+  .receipt.open { translate: -50% -50%; opacity: 1; pointer-events: auto; }
+  .paper {
+    background: #fffdf8; color: #3b2a1e;
+    padding: 24px 20px 28px; border-radius: 16px 16px 0 0;
+    font-size: .92rem;
+    /* حافة مشرشرة زي إيصال الكاشير */
+    -webkit-mask: radial-gradient(circle 8px at 50% 100%, transparent 98%, #000) 0 0 / 20px 100%;
+            mask: radial-gradient(circle 8px at 50% 100%, transparent 98%, #000) 0 0 / 20px 100%;
+  }
+  .r-head { text-align: center; border-bottom: 2px dashed #e2d3c2; padding-bottom: 12px; }
+  .r-logo { font-size: 2.2rem; }
+  .r-head h2 { margin: 0; color: #b5652b; font-size: 1.6rem; line-height: 1.2; }
+  .r-title { display: inline-block; margin: 6px 0 8px; padding: 2px 14px; border-radius: 999px; background: #f4e6d6; font-weight: 700; }
+  .r-meta { display: flex; justify-content: space-between; color: #8a7666; font-size: .82rem; }
+  .r-meta b { color: #3b2a1e; direction: ltr; unicode-bidi: embed; }
+  .r-items { width: 100%; border-collapse: collapse; margin: 10px 0; }
+  .r-items th { font-size: .78rem; color: #8a7666; font-weight: 600; padding: 4px 2px; text-align: center; }
+  .r-items th:first-child, .r-items td:first-child { text-align: right; }
+  .r-items td { padding: 7px 2px; border-top: 1px solid #f0e6da; text-align: center; vertical-align: top; }
+  .r-items td:last-child { font-weight: 700; }
+  .r-sum { border-top: 2px dashed #e2d3c2; padding-top: 8px; }
+  .r-sum div { display: flex; justify-content: space-between; padding: 2px 0; }
+  .r-total { font-size: 1.25rem; font-weight: 800; color: #b5652b; margin-top: 4px; }
+  .r-pay { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 2px dashed #e2d3c2; }
+  .r-status { margin: 8px 0; padding: 8px 12px; border-radius: 12px; text-align: center; font-weight: 700; font-size: .85rem; background: #fff4dc; color: #8a5a00; }
+  .r-cust { color: #6b5848; font-size: .85rem; line-height: 1.8; }
+  .r-thanks { text-align: center; margin: 14px 0 0; color: #8a7666; }
+  .r-actions { display: grid; gap: 8px; margin-top: 12px; }
+  .r-actions .btn { padding: 12px; border-radius: 14px; }
+  .close-r { font: inherit; font-weight: 700; padding: 10px; border-radius: 14px; cursor: pointer; background: rgba(255, 255, 255, .9); border: none; color: #3b2a1e; }
+
+  @media print {
+    body > *:not(.receipt) { display: none !important; }
+    body::before { display: none; }
+    body { background: #fff; }
+    .receipt { position: static; translate: none; opacity: 1; width: 100%; max-height: none; }
+    .r-actions { display: none; }
+    .paper { -webkit-mask: none; mask: none; }
+  }
 </style>
 </head>
 <body>
@@ -479,6 +527,15 @@
 </button>
 
 <div class="toast" id="toast" role="status"></div>
+
+<div class="overlay" id="receiptOverlay"></div>
+<div class="receipt" id="receipt" role="dialog" aria-label="إيصال الطلب">
+  <div class="paper" id="receiptBody"></div>
+  <div class="r-actions">
+    <button class="btn" id="receiptPrint" type="button">🖨️ حفظ / طباعة الإيصال</button>
+    <button class="close-r" id="receiptClose" type="button">رجوع للمنيو</button>
+  </div>
+</div>
 
 <a class="wa-float" id="waFloat" target="_blank" rel="noopener" aria-label="كلمنا على واتساب"></a>
 
@@ -766,27 +823,82 @@
     if (!PHONE) return err("لم يتم إضافة رقم واتساب المخبز بعد");
 
     const fee = delivery ? DELIVERY_FEE : 0;
+    const now = new Date();
+    const order = {
+      no: `B${String(now.getFullYear()).slice(2)}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${Math.floor(100 + Math.random() * 900)}`,
+      date: now.toLocaleString("ar-EG", { dateStyle: "medium", timeStyle: "short" }),
+      lines: Object.entries(cart).map(([n, q]) => ({ name: n, qty: q, price: ITEMS[n].price, total: ITEMS[n].price * q })),
+      sub, fee, total: sub + fee, delivery, pay: pay(),
+      name: f.name.value.trim(), phone: f.phone.value.trim(),
+      address: delivery ? f.address.value.trim() : "", notes: f.notes.value.trim(),
+    };
+
     const msg = [
       `السلام عليكم 👋`,
       `🧁 *طلب جديد - ${BAKERY_NAME}*`,
+      `🧾 رقم الطلب: ${order.no}`,
       "",
-      ...Object.entries(cart).map(([n, q]) => `• ${n} × ${q} = ${money(ITEMS[n].price * q)}`),
+      ...order.lines.map(l => `• ${l.name}\n   ${l.qty} × ${money(l.price)} = ${money(l.total)}`),
       "",
       `المنتجات: ${money(sub)}`,
       delivery ? `التوصيل: ${money(fee)}` : null,
-      `*الإجمالي: ${money(sub + fee)}*`,
+      `*الإجمالي: ${money(order.total)}*`,
       "",
       delivery ? "🛵 توصيل للبيت" : "🏪 استلام من المخبز",
-      `👤 ${f.name.value.trim()}`,
-      `📞 ${f.phone.value.trim()}`,
-      delivery ? `📍 ${f.address.value.trim()}` : null,
-      f.notes.value.trim() ? `📝 ${f.notes.value.trim()}` : null,
-      `الدفع: ${PAY_NAMES[pay()]}`,
+      `👤 ${order.name}`,
+      `📞 ${order.phone}`,
+      delivery ? `📍 ${order.address}` : null,
+      order.notes ? `📝 ${order.notes}` : null,
+      `الدفع: ${PAY_NAMES[order.pay]}`,
     ].filter(l => l !== null).join("\n");
 
     window.open(`https://wa.me/2${PHONE}?text=${encodeURIComponent(msg)}`, "_blank");
     cart = {}; saveCart(); render($("search").value); update();
+    showReceipt(order);
   });
+
+  // ===== الإيصال =====
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const PAY_STATUS = {
+    cash: ["⏳", "الدفع كاش عند الاستلام"],
+    instapay: ["📤", "في انتظار تأكيد التحويل — ابعت صورة التحويل على الواتساب"],
+    wallet: ["📤", "في انتظار تأكيد التحويل — ابعت صورة التحويل على الواتساب"],
+  };
+
+  function showReceipt(o) {
+    const [icon, status] = PAY_STATUS[o.pay];
+    $("receiptBody").innerHTML = `
+      <div class="r-head">
+        <div class="r-logo">🥐</div>
+        <h2>${esc(BAKERY_NAME)}</h2>
+        <div class="r-title">إيصال طلب</div>
+        <div class="r-meta"><span>رقم الطلب <b>${o.no}</b></span><span>${o.date}</span></div>
+      </div>
+      <table class="r-items">
+        <thead><tr><th>الصنف</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr></thead>
+        <tbody>${o.lines.map(l => `<tr><td>${esc(l.name)}</td><td>${l.qty}</td><td>${l.price}</td><td>${l.total}</td></tr>`).join("")}</tbody>
+      </table>
+      <div class="r-sum">
+        <div><span>المنتجات</span><span>${money(o.sub)}</span></div>
+        ${o.delivery ? `<div><span>التوصيل</span><span>${money(o.fee)}</span></div>` : ""}
+        <div class="r-total"><span>الإجمالي</span><span>${money(o.total)}</span></div>
+      </div>
+      <div class="r-pay"><span>طريقة الدفع</span><b>${PAY_NAMES[o.pay]}</b></div>
+      <div class="r-status r-${o.pay}">${icon} ${status}</div>
+      <div class="r-cust">
+        <div>${o.delivery ? "🛵 توصيل للبيت" : "🏪 استلام من المخبز"}</div>
+        <div>👤 ${esc(o.name)} • 📞 <span dir="ltr">${esc(o.phone)}</span></div>
+        ${o.address ? `<div>📍 ${esc(o.address)}</div>` : ""}
+        ${o.notes ? `<div>📝 ${esc(o.notes)}</div>` : ""}
+      </div>
+      <p class="r-thanks">شكراً لطلبك من ${esc(BAKERY_NAME)} 🤍<br>تم إرسال الطلب على الواتساب</p>`;
+    $("receiptOverlay").classList.add("open");
+    $("receipt").classList.add("open");
+  }
+  const closeReceipt = () => { $("receiptOverlay").classList.remove("open"); $("receipt").classList.remove("open"); };
+  $("receiptClose").onclick = closeReceipt;
+  $("receiptOverlay").onclick = closeReceipt;
+  $("receiptPrint").onclick = () => window.print();
 
   update();
 
