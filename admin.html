@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>لوحة الأدمن - Bakery</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>
+  :root {
+    --bg: #f6efe6; --card: #fff; --ink: #3b2a1e; --muted: #8a7666;
+    --accent: #b5652b; --line: #eadfd2;
+    --new: #2f6fd6; --preparing: #d68a1f; --delivered: #1f9d55; --cancelled: #b23b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #1c1612; --card: #27201a; --ink: #f3e9de; --muted: #b3a191; --accent: #e39a5f; --line: #3a2f26; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Cairo", system-ui, sans-serif; line-height: 1.6; }
+  .hidden { display: none !important; }
+  button, input, select { font: inherit; }
+  .btn { border: none; cursor: pointer; font-weight: 700; color: #fff; background: var(--accent); border-radius: 12px; padding: 10px 18px; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+
+  /* تسجيل الدخول */
+  .login { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+  .login form { width: min(380px, 100%); background: var(--card); border-radius: 24px; padding: 28px 24px; box-shadow: 0 20px 40px -20px rgba(0,0,0,.4); }
+  .login h1 { margin: 0; text-align: center; color: var(--accent); }
+  .login p { margin: 0 0 18px; text-align: center; color: var(--muted); }
+  .field { display: block; margin-bottom: 12px; }
+  .field span { display: block; font-size: .9rem; color: var(--muted); margin-bottom: 4px; }
+  .field input { width: 100%; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); }
+  .login .btn { width: 100%; padding: 12px; margin-top: 6px; }
+  .error { color: #c0392b; text-align: center; min-height: 1.4em; margin: 8px 0 0; font-size: .9rem; }
+
+  /* اللوحة */
+  .top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--line); }
+  .top h1 { margin: 0; font-size: 1.2rem; color: var(--accent); flex: 1; }
+  .top small { color: var(--muted); }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 16px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .stat { background: var(--card); border-radius: 18px; padding: 14px 16px; box-shadow: 0 8px 20px -14px rgba(0,0,0,.4); }
+  .stat small { color: var(--muted); display: block; }
+  .stat b { font-size: 1.6rem; }
+  .tabs { display: flex; gap: 8px; margin: 20px 0 12px; align-items: center; flex-wrap: wrap; }
+  .tab { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 6px 16px; cursor: pointer; font-weight: 700; }
+  .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tabs select { margin-inline-start: auto; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+  .list { display: grid; gap: 12px; }
+  .card { background: var(--card); border-radius: 18px; padding: 14px 16px; box-shadow: 0 8px 20px -14px rgba(0,0,0,.4); border-inline-start: 5px solid var(--line); }
+  .card[data-status="new"] { border-inline-start-color: var(--new); }
+  .card[data-status="preparing"] { border-inline-start-color: var(--preparing); }
+  .card[data-status="delivered"] { border-inline-start-color: var(--delivered); }
+  .card[data-status="cancelled"] { border-inline-start-color: var(--cancelled); opacity: .7; }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+  .row .grow { flex: 1; }
+  .no { font-weight: 800; direction: ltr; }
+  .muted { color: var(--muted); font-size: .88rem; }
+  .items { margin: 8px 0; padding: 8px 12px; background: var(--bg); border-radius: 12px; font-size: .92rem; }
+  .items div { display: flex; justify-content: space-between; gap: 8px; }
+  .total { font-weight: 800; color: var(--accent); font-size: 1.1rem; }
+  .pill { padding: 1px 10px; border-radius: 999px; background: var(--bg); font-size: .85rem; }
+  .status { padding: 6px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-weight: 700; }
+  .contact a { color: var(--accent); text-decoration: none; font-weight: 700; }
+  .msg { white-space: pre-wrap; margin: 6px 0 0; }
+  .empty { text-align: center; color: var(--muted); padding: 32px 0; }
+</style>
+</head>
+<body>
+
+<section class="login" id="loginView">
+  <form id="loginForm">
+    <h1>🥐 Bakery</h1>
+    <p>لوحة الأدمن</p>
+    <label class="field"><span>الإيميل</span><input name="email" type="email" autocomplete="username" required></label>
+    <label class="field"><span>كلمة السر</span><input name="password" type="password" autocomplete="current-password" required></label>
+    <button class="btn" type="submit">دخول</button>
+    <p class="error" id="loginError"></p>
+  </form>
+</section>
+
+<section class="hidden" id="appView">
+  <div class="top">
+    <h1>🥐 لوحة الأدمن</h1>
+    <small id="who"></small>
+    <button class="btn ghost" id="refresh" type="button">🔄 تحديث</button>
+    <button class="btn ghost" id="logout" type="button">خروج</button>
+  </div>
+  <div class="wrap">
+    <p class="error" id="appError"></p>
+    <div class="stats">
+      <div class="stat"><small>طلبات النهارده</small><b id="sToday">0</b></div>
+      <div class="stat"><small>مبيعات النهارده</small><b id="sSales">0</b></div>
+      <div class="stat"><small>طلبات جديدة</small><b id="sNew">0</b></div>
+      <div class="stat"><small>الرسائل</small><b id="sMsgs">0</b></div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="orders" type="button">🛒 الطلبات</button>
+      <button class="tab" data-tab="messages" type="button">✉️ الرسائل</button>
+      <select id="filter" aria-label="فلتر الحالة">
+        <option value="">كل الطلبات</option>
+        <option value="new">جديد</option>
+        <option value="preparing">بيتجهز</option>
+        <option value="delivered">اتسلّم</option>
+        <option value="cancelled">ملغي</option>
+      </select>
+    </div>
+    <div class="list" id="orders"></div>
+    <div class="list hidden" id="messages"></div>
+  </div>
+</section>
+
+<script>
+  // نفس مشروع Supabase بتاع الموقع — المفتاح الـ publishable بس
+  const SUPABASE_URL = "https://hidjlsdcwnsgmrqnlphy.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_UnTwNkLzJw5RKjBHPMdF7Q_yIxAYXGy";
+  const CURRENCY = "جنيه";
+
+  const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const money = n => `${n} ${CURRENCY}`;
+  const when = t => new Date(t).toLocaleString("ar-EG", { dateStyle: "medium", timeStyle: "short" });
+  const STATUS = { new: "🆕 جديد", preparing: "👨‍🍳 بيتجهز", delivered: "✅ اتسلّم", cancelled: "❌ ملغي" };
+  const PAY = { cash: "💵 كاش", instapay: "⚡ إنستاباي", wallet: "📱 محفظة" };
+  let orders = [], messages = [], timer;
+
+  // ===== الدخول =====
+  $("loginForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const f = e.target.elements;
+    $("loginError").textContent = "";
+    const { error } = await db.auth.signInWithPassword({ email: f.email.value.trim(), password: f.password.value });
+    if (error) $("loginError").textContent = "الإيميل أو كلمة السر غلط";
+  });
+  $("logout").onclick = () => db.auth.signOut();
+
+  db.auth.onAuthStateChange((_event, session) => {
+    if (session) show(session.user.email); else hide();
+  });
+
+  async function show(email) {
+    $("loginView").classList.add("hidden");
+    $("appView").classList.remove("hidden");
+    $("who").textContent = email;
+    const { data: ok } = await db.rpc("is_admin");
+    if (!ok) { $("appError").textContent = "الحساب ده مش متسجّل كأدمن."; return; }
+    $("appError").textContent = "";
+    load();
+    clearInterval(timer);
+    timer = setInterval(load, 30000); // تحديث تلقائي كل 30 ثانية
+  }
+  function hide() {
+    clearInterval(timer);
+    $("appView").classList.add("hidden");
+    $("loginView").classList.remove("hidden");
+  }
+
+  // ===== البيانات =====
+  async function load() {
+    const [o, m] = await Promise.all([
+      db.from("orders").select("*").order("created_at", { ascending: false }).limit(500),
+      db.from("messages").select("*").order("created_at", { ascending: false }).limit(500),
+    ]);
+    if (o.error || m.error) { $("appError").textContent = "حصلت مشكلة في تحميل البيانات"; return; }
+    $("appError").textContent = "";
+    orders = o.data; messages = m.data;
+    renderStats(); renderOrders(); renderMessages();
+  }
+  $("refresh").onclick = load;
+
+  function renderStats() {
+    const today = new Date().toDateString();
+    const todays = orders.filter(o => new Date(o.created_at).toDateString() === today);
+    $("sToday").textContent = todays.length;
+    $("sSales").textContent = money(todays.filter(o => o.status !== "cancelled").reduce((s, o) => s + o.total, 0));
+    $("sNew").textContent = orders.filter(o => o.status === "new").length;
+    $("sMsgs").textContent = messages.length;
+  }
+
+  function renderOrders() {
+    const f = $("filter").value;
+    const list = orders.filter(o => !f || o.status === f);
+    $("orders").innerHTML = list.map(o => `
+      <article class="card" data-status="${esc(o.status)}">
+        <div class="row">
+          <span class="no">#${esc(o.order_no)}</span>
+          <span class="muted grow">${when(o.created_at)}</span>
+          <select class="status" data-id="${o.id}" aria-label="حالة الطلب">
+            ${Object.entries(STATUS).map(([v, t]) => `<option value="${v}" ${v === o.status ? "selected" : ""}>${t}</option>`).join("")}
+          </select>
+        </div>
+        <div class="row contact">
+          <b>👤 ${esc(o.customer_name)}</b>
+          <a href="tel:${esc(o.customer_phone)}" dir="ltr">📞 ${esc(o.customer_phone)}</a>
+          <a href="https://wa.me/2${esc(o.customer_phone.replace(/\D/g, "").replace(/^2/, ""))}" target="_blank" rel="noopener">💬 واتساب</a>
+        </div>
+        <div class="muted">${o.delivery ? `🛵 توصيل — 📍 ${esc(o.address)}` : "🏪 استلام من المخبز"}</div>
+        <div class="items">${(o.items || []).map(l => `<div><span>${esc(l.name)} × ${esc(l.qty)}</span><span>${money(esc(l.total))}</span></div>`).join("")}</div>
+        <div class="row">
+          <span class="pill">${PAY[o.payment] || esc(o.payment)}</span>
+          ${o.delivery_fee ? `<span class="muted">توصيل ${money(o.delivery_fee)}</span>` : ""}
+          <span class="grow"></span>
+          <span class="total">${money(o.total)}</span>
+        </div>
+        ${o.notes ? `<p class="msg muted">📝 ${esc(o.notes)}</p>` : ""}
+      </article>`).join("") || `<p class="empty">مفيش طلبات</p>`;
+  }
+
+  function renderMessages() {
+    $("messages").innerHTML = messages.map(m => `
+      <article class="card">
+        <div class="row contact">
+          <b class="grow">👤 ${esc(m.name)}</b>
+          <a href="tel:${esc(m.phone)}" dir="ltr">📞 ${esc(m.phone)}</a>
+          <span class="muted">${when(m.created_at)}</span>
+        </div>
+        <p class="msg">${esc(m.message)}</p>
+      </article>`).join("") || `<p class="empty">مفيش رسائل</p>`;
+  }
+
+  // تغيير حالة الطلب
+  $("orders").addEventListener("change", async e => {
+    const sel = e.target.closest("select.status");
+    if (!sel) return;
+    const id = Number(sel.dataset.id);
+    const { error } = await db.from("orders").update({ status: sel.value }).eq("id", id);
+    if (error) { $("appError").textContent = "مقدرتش أغيّر الحالة، جرّب تاني"; return load(); }
+    const o = orders.find(x => x.id === id);
+    if (o) o.status = sel.value;
+    renderStats(); renderOrders();
+  });
+
+  $("filter").onchange = renderOrders;
+  document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x === t));
+    const isOrders = t.dataset.tab === "orders";
+    $("orders").classList.toggle("hidden", !isOrders);
+    $("messages").classList.toggle("hidden", isOrders);
+    $("filter").classList.toggle("hidden", !isOrders);
+  });
+</script>
+</body>
+</html>
