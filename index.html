@@ -368,17 +368,106 @@
   }
 
   .error { color: #c0392b; font-size: .9rem; min-height: 1.2em; margin: 6px 0 0; text-align: center; }
+
+  /* ===== شكل المنيو (كروت زي تطبيقات التوصيل) ===== */
+  html { scroll-behavior: smooth; }
+  main { max-width: 980px; perspective: none; }
+  header { padding: 56px 16px 28px; }
+  .logo {
+    width: 84px; height: 84px; margin: 0 auto 10px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 2.6rem;
+    background: radial-gradient(circle at 35% 30%, #fff6ea, #f2c99c);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, .25), 0 14px 30px rgba(0, 0, 0, .4);
+    animation: bob 4s ease-in-out infinite;
+  }
+  @keyframes bob { 50% { translate: 0 -6px; } }
+  header h1 { transform: none; font-size: 3rem; line-height: 1.2; }
+  .perks { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; }
+  .perks span {
+    padding: 4px 14px; border-radius: 999px; font-size: .9rem; color: #fff;
+    background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .22);
+    backdrop-filter: blur(6px);
+  }
+
+  .searchbox { position: relative; max-width: 640px; margin: 0 auto; }
+  .searchbox::before { content: "🔍"; position: absolute; inset-inline-start: 16px; top: 50%; translate: 0 -50%; font-size: 1rem; opacity: .6; }
+  .search { padding-inline-start: 44px; border-radius: 16px; height: 52px; border: none; }
+
+  .chips {
+    position: sticky; top: 0; z-index: 8;
+    display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+    margin: 16px -16px 0; padding: 10px 16px;
+    background: rgba(30, 16, 8, .55); backdrop-filter: blur(12px);
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chips a {
+    flex: none; padding: 6px 16px; border-radius: 999px; text-decoration: none;
+    font-weight: 700; font-size: .95rem; color: #f3dcc4;
+    border: 1px solid rgba(255, 255, 255, .2); transition: background .2s, color .2s;
+  }
+  .chips a.active { background: #fff; color: var(--accent); border-color: #fff; }
+
+  section.cat {
+    background: none; border: none; box-shadow: none; padding: 0; margin-top: 28px;
+    transform: none !important; scroll-margin-top: 70px;
+  }
+  section.cat h2 {
+    transform: none; color: #fff; font-size: 1.4rem; margin: 0 0 12px;
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  section.cat h2 small { font-size: .85rem; font-weight: 400; color: #e6cdb3; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 14px; }
+
+  .prod {
+    display: flex; flex-direction: column; overflow: hidden;
+    background: var(--card); border-radius: 20px;
+    box-shadow: 0 14px 30px -14px rgba(0, 0, 0, .55);
+    transition: transform .25s, box-shadow .25s;
+  }
+  .prod:hover { transform: translateY(-4px); box-shadow: 0 22px 36px -14px rgba(0, 0, 0, .6); }
+  .ph { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--bg); display: grid; place-items: center; font-size: 3rem; }
+  .ph img { width: 100%; height: 100%; object-fit: cover; transition: scale .5s; }
+  .prod:hover .ph img { scale: 1.08; }
+  .ph .qty {
+    position: absolute; top: 10px; inset-inline-start: 10px;
+    min-width: 28px; height: 28px; padding: 0 8px; border-radius: 999px;
+    display: grid; place-items: center; font-weight: 800; font-size: .9rem;
+    background: var(--accent); color: #fff; box-shadow: 0 4px 10px rgba(0, 0, 0, .3);
+  }
+  .pb { padding: 10px 12px 12px; display: flex; flex-direction: column; flex: 1; gap: 8px; }
+  .pb h3 { margin: 0; font-size: 1rem; line-height: 1.4; flex: 1; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .pr { font-weight: 800; color: var(--accent); white-space: nowrap; }
+  .pr small { font-weight: 600; font-size: .75rem; }
+  .prod .add { width: 38px; height: 38px; border-radius: 12px; font-size: 1.4rem; }
+  .prod .stepper { padding: 2px; border-radius: 12px; }
+  .prod .stepper .btn { width: 28px; height: 28px; font-size: 1rem; }
+  .prod .stepper b { min-width: 18px; }
+  .empty { color: #f3dcc4; }
+
+  .toast {
+    position: fixed; z-index: 40; top: 16px; left: 50%;
+    translate: -50% -150%; opacity: 0;
+    padding: 10px 20px; border-radius: 999px; white-space: nowrap;
+    background: #2a1a10; color: #fff; font-weight: 700; box-shadow: 0 10px 24px rgba(0, 0, 0, .35);
+    transition: translate .35s cubic-bezier(.2, 1.4, .4, 1), opacity .25s;
+  }
+  .toast.show { translate: -50% 0; opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .logo { animation: none; } }
 </style>
 </head>
 <body>
 
 <header>
+  <div class="logo">🥐</div>
   <h1 id="name"></h1>
-  <p>قائمة الأسعار</p>
+  <p>مخبوزات وحلويات طازة كل يوم</p>
+  <div class="perks"><span>🔥 طازة يومياً</span><span>🛵 توصيل للبيت</span><span>💳 كاش وإنستاباي</span></div>
 </header>
 
 <main>
-  <input class="search" id="search" type="search" placeholder="ابحث عن صنف...">
+  <div class="searchbox"><input class="search" id="search" type="search" placeholder="ابحث عن صنف..."></div>
+  <nav class="chips" id="chips"></nav>
   <div id="menu"></div>
 </main>
 
@@ -388,6 +477,8 @@
   <span><span class="count" id="cartCount">0</span>عرض الطلب</span>
   <span id="cartTotal"></span>
 </button>
+
+<div class="toast" id="toast" role="status"></div>
 
 <a class="wa-float" id="waFloat" target="_blank" rel="noopener" aria-label="كلمنا على واتساب"></a>
 
@@ -523,19 +614,56 @@
     ? `<div class="stepper"><button class="btn" type="button" data-dec="${name}" aria-label="أقل">−</button><b>${cart[name]}</b><button class="btn" type="button" data-inc="${name}" aria-label="أكثر">+</button></div>`
     : `<button class="btn add" type="button" data-inc="${name}" aria-label="أضف ${name}">+</button>`;
 
+  const qtyBadge = name => cart[name] ? `<span class="qty">${cart[name]}</span>` : "";
+
   function render(filter = "") {
     const q = filter.trim();
-    const html = MENU.map(({ category, items }) => {
-      const rows = items
-        .filter(([name]) => !q || name.includes(q) || category.includes(q))
-        .map(([name, price, pic = "🍞"]) => {
-          const img = isImg(pic) ? `<img src="${pic}" alt="${name}">` : pic;
-          return `<div class="item"><span class="pic">${img}</span><div class="info"><span class="name">${name}</span><span class="price">${money(price)}</span></div><div class="ctl" data-ctl="${name}">${control(name)}</div></div>`;
-        })
-        .join("");
-      return rows ? `<section><h2>${category}</h2>${rows}</section>` : "";
-    }).join("");
-    document.getElementById("menu").innerHTML = html || `<p class="empty">لا توجد نتائج</p>`;
+    const shown = MENU.map(({ category, items }, i) => ({
+      id: `cat-${i}`, category,
+      items: items.filter(([name]) => !q || name.includes(q) || category.includes(q)),
+    })).filter(c => c.items.length);
+
+    document.getElementById("menu").innerHTML = shown.map(({ id, category, items }) => {
+      const cards = items.map(([name, price, pic = "🍞"]) => {
+        const img = isImg(pic) ? `<img src="${pic}" alt="${name}" loading="lazy">` : pic;
+        return `<article class="prod">
+          <div class="ph">${img}<span data-badge="${name}">${qtyBadge(name)}</span></div>
+          <div class="pb"><h3>${name}</h3>
+            <div class="row"><span class="pr">${price} <small>${CURRENCY}</small></span><div class="ctl" data-ctl="${name}">${control(name)}</div></div>
+          </div></article>`;
+      }).join("");
+      return `<section class="cat" id="${id}"><h2>${category} <small>${items.length} أصناف</small></h2><div class="grid">${cards}</div></section>`;
+    }).join("") || `<p class="empty">لا توجد نتائج</p>`;
+
+    document.getElementById("chips").innerHTML = shown.map(({ id, category }, i) =>
+      `<a href="#${id}" class="${i ? "" : "active"}">${category}</a>`).join("");
+    watchSections();
+  }
+
+  // تمييز القسم الظاهر في شريط الأقسام
+  let spy;
+  function watchSections() {
+    spy?.disconnect();
+    if (!("IntersectionObserver" in window)) return;
+    spy = new IntersectionObserver(entries => {
+      entries.filter(e => e.isIntersecting).forEach(e => {
+        document.querySelectorAll("#chips a").forEach(a => {
+          const on = a.getAttribute("href") === "#" + e.target.id;
+          a.classList.toggle("active", on);
+          if (on) a.scrollIntoView({ block: "nearest", inline: "center" });
+        });
+      });
+    }, { rootMargin: "-80px 0px -65% 0px" });
+    document.querySelectorAll("section.cat").forEach(s => spy.observe(s));
+  }
+
+  let toastTimer;
+  function toast(text) {
+    const t = document.getElementById("toast");
+    t.textContent = text;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 1600);
   }
 
   document.getElementById("search").addEventListener("input", e => render(e.target.value));
@@ -582,6 +710,8 @@
     if (cart[name] <= 0) delete cart[name];
     saveCart();
     document.querySelectorAll(`[data-ctl="${CSS.escape(name)}"]`).forEach(el => el.innerHTML = control(name));
+    document.querySelectorAll(`[data-badge="${CSS.escape(name)}"]`).forEach(el => el.innerHTML = qtyBadge(name));
+    if (delta > 0) toast(`✓ ${name} اتضاف للسلة`);
     update();
   }
 
@@ -660,20 +790,6 @@
 
   update();
 
-  // ميل الكروت ثلاثي الأبعاد مع حركة الماوس أو اللمس
-  const menu = document.getElementById("menu");
-  menu.addEventListener("pointermove", e => {
-    const card = e.target.closest("section");
-    if (!card) return;
-    const r = card.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width - 0.5;
-    const y = (e.clientY - r.top) / r.height - 0.5;
-    card.style.transform = `rotateY(${x * 10}deg) rotateX(${-y * 6}deg)`;
-  });
-  menu.addEventListener("pointerout", e => {
-    const card = e.target.closest("section");
-    if (card && !card.contains(e.relatedTarget)) card.style.transform = "";
-  });
 
   // ===== الترحيب والواتساب =====
   const WELCOME_TEXT = `السلام عليكم 👋\nجاي من موقع ${BAKERY_NAME} وعايز أستفسر عن: `;
