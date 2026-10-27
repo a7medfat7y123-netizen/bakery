@@ -333,17 +333,21 @@
     box-shadow: 0 30px 60px rgba(0, 0, 0, .4);
   }
   .welcome.open { scale: 1; opacity: 1; pointer-events: auto; }
-  .w-langs {
-    position: absolute; z-index: 2; top: 12px; inset-inline: 0; margin: auto; width: max-content;
-    display: flex; gap: 4px; padding: 4px; border-radius: 999px;
-    background: rgba(30, 16, 8, .55); backdrop-filter: blur(8px);
+  .w-lang { position: absolute; z-index: 2; top: 12px; inset-inline-end: 12px; }
+  .w-lang::before, .w-lang::after { z-index: 1; }
+  .w-lang::before { content: "🌐"; position: absolute; inset-inline-start: 12px; top: 50%; translate: 0 -50%; pointer-events: none; }
+  .w-lang::after {
+    content: ""; position: absolute; inset-inline-end: 14px; top: 50%; width: 7px; height: 7px; pointer-events: none;
+    border: solid #f3dcc4; border-width: 0 2px 2px 0; transform: translateY(-70%) rotate(45deg);
   }
-  .w-langs button {
-    border: 0; cursor: pointer; padding: 6px 14px; border-radius: 999px;
-    background: transparent; color: #f3dcc4; font: 700 .9rem "Cairo", sans-serif; transition: background .2s;
+  .w-lang select {
+    appearance: none; -webkit-appearance: none; cursor: pointer;
+    height: 38px; padding-inline: 38px 36px; border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, .3); background: rgba(30, 16, 8, .6); backdrop-filter: blur(8px);
+    color: #f3dcc4; font: 700 .9rem "Cairo", sans-serif;
   }
-  .w-langs button:hover { background: rgba(255, 255, 255, .15); }
-  .w-langs button[aria-pressed="true"] { background: #f6b97a; color: #2b1a0f; }
+  .w-lang select:focus-visible { outline: 2px solid #f6b97a; outline-offset: 2px; }
+  .w-lang option { color: #1d1209; background: #fff; }
   .welcome .hero {
     height: 140px;
     background: linear-gradient(180deg, transparent 30%, var(--card)), url("images/croissant.jpg") center / cover;
@@ -1055,11 +1059,13 @@
 
 <div class="overlay" id="welcomeOverlay"></div>
 <div class="welcome" id="welcome" role="dialog" aria-labelledby="welcomeTitle">
-  <div class="w-langs" id="welcomeLangs" role="group" aria-label="اللغة" data-t-aria="language">
-    <button type="button" data-lang="ar" lang="ar">عربي</button>
-    <button type="button" data-lang="en" lang="en">English</button>
-    <button type="button" data-lang="fr" lang="fr">Français</button>
-  </div>
+  <label class="w-lang">
+    <select id="welcomeLang" aria-label="اللغة" data-t-aria="language">
+      <option value="ar">عربي</option>
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+    </select>
+  </label>
   <div class="hero"></div>
   <div class="body">
     <span class="wave">👋</span>
@@ -1393,7 +1399,7 @@
     document.querySelectorAll("[data-t-aria]").forEach(el => el.setAttribute("aria-label", t(el.dataset.tAria)));
     document.title = t("pageTitle");
     document.getElementById("langSel").value = LANG;
-    document.querySelectorAll("#welcomeLangs [data-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === LANG));
+    document.getElementById("welcomeLang").value = LANG;
   }
   applyStatic();
 
@@ -1874,10 +1880,7 @@
     renderWelcome();
   }
   $("langSel").addEventListener("change", e => setLang(e.target.value));
-  $("welcomeLangs").addEventListener("click", e => {
-    const b = e.target.closest("[data-lang]");
-    if (b) setLang(b.dataset.lang);
-  });
+  $("welcomeLang").addEventListener("change", e => setLang(e.target.value));
 
   const closeWelcome = () => { $("welcome").classList.remove("open"); $("welcomeOverlay").classList.remove("open"); };
   $("welcomeMenu").onclick = closeWelcome;
