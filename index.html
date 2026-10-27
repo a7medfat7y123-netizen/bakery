@@ -333,6 +333,17 @@
     box-shadow: 0 30px 60px rgba(0, 0, 0, .4);
   }
   .welcome.open { scale: 1; opacity: 1; pointer-events: auto; }
+  .w-langs {
+    position: absolute; z-index: 2; top: 12px; inset-inline: 0; margin: auto; width: max-content;
+    display: flex; gap: 4px; padding: 4px; border-radius: 999px;
+    background: rgba(30, 16, 8, .55); backdrop-filter: blur(8px);
+  }
+  .w-langs button {
+    border: 0; cursor: pointer; padding: 6px 14px; border-radius: 999px;
+    background: transparent; color: #f3dcc4; font: 700 .9rem "Cairo", sans-serif; transition: background .2s;
+  }
+  .w-langs button:hover { background: rgba(255, 255, 255, .15); }
+  .w-langs button[aria-pressed="true"] { background: #f6b97a; color: #2b1a0f; }
   .welcome .hero {
     height: 140px;
     background: linear-gradient(180deg, transparent 30%, var(--card)), url("images/croissant.jpg") center / cover;
@@ -1044,6 +1055,11 @@
 
 <div class="overlay" id="welcomeOverlay"></div>
 <div class="welcome" id="welcome" role="dialog" aria-labelledby="welcomeTitle">
+  <div class="w-langs" id="welcomeLangs" role="group" aria-label="اللغة" data-t-aria="language">
+    <button type="button" data-lang="ar" lang="ar">عربي</button>
+    <button type="button" data-lang="en" lang="en">English</button>
+    <button type="button" data-lang="fr" lang="fr">Français</button>
+  </div>
   <div class="hero"></div>
   <div class="body">
     <span class="wave">👋</span>
@@ -1377,6 +1393,7 @@
     document.querySelectorAll("[data-t-aria]").forEach(el => el.setAttribute("aria-label", t(el.dataset.tAria)));
     document.title = t("pageTitle");
     document.getElementById("langSel").value = LANG;
+    document.querySelectorAll("#welcomeLangs [data-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === LANG));
   }
   applyStatic();
 
@@ -1845,8 +1862,9 @@
   renderWelcome();
 
   // ===== تغيير اللغة =====
-  $("langSel").addEventListener("change", e => {
-    LANG = e.target.value;
+  function setLang(lang) {
+    if (!LANGS.includes(lang) || lang === LANG) return;
+    LANG = lang;
     try { localStorage.setItem("lang", LANG); } catch {}
     applyStatic();
     renderFooterContact();
@@ -1854,6 +1872,11 @@
     render($("search").value);
     update();
     renderWelcome();
+  }
+  $("langSel").addEventListener("change", e => setLang(e.target.value));
+  $("welcomeLangs").addEventListener("click", e => {
+    const b = e.target.closest("[data-lang]");
+    if (b) setLang(b.dataset.lang);
   });
 
   const closeWelcome = () => { $("welcome").classList.remove("open"); $("welcomeOverlay").classList.remove("open"); };
